@@ -19,3 +19,7 @@ Zip.vcxproj.filters
 应用程序向导使用“TODO:”注释来指示应添加或自定义的源代码部分。
 
 /////////////////////////////////////////////////////////////////////////////
+
+zlib官网：http://www.zlib.net/
+zlib版本：1.2.11
+zlib手册：http://www.zlib.net/manual.html

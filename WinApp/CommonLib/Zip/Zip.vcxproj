@@ -34,9 +34,11 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\Basic\ProjProp\BasePropertySheetDebug.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\..\Basic\ProjProp\BasePropertySheetRelease.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup />
@@ -47,6 +49,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ZLib\;WinZip\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -62,6 +65,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>ZLib\;WinZip\;$(SolutionDir)..\Basic\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -72,6 +76,51 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Encoding.cpp" />
+    <ClCompile Include="WinZip\ioapi.c" />
+    <ClCompile Include="WinZip\iowin32.c" />
+    <ClCompile Include="WinZip\mztools.c" />
+    <ClCompile Include="WinZip\unzip.c" />
+    <ClCompile Include="WinZip\zip.c" />
+    <ClCompile Include="ZLibWrapLib.cpp" />
+    <ClCompile Include="ZLib\adler32.c" />
+    <ClCompile Include="ZLib\compress.c" />
+    <ClCompile Include="ZLib\crc32.c" />
+    <ClCompile Include="ZLib\deflate.c" />
+    <ClCompile Include="ZLib\gzclose.c" />
+    <ClCompile Include="ZLib\gzlib.c" />
+    <ClCompile Include="ZLib\gzread.c" />
+    <ClCompile Include="ZLib\gzwrite.c" />
+    <ClCompile Include="ZLib\infback.c" />
+    <ClCompile Include="ZLib\inffast.c" />
+    <ClCompile Include="ZLib\inflate.c" />
+    <ClCompile Include="ZLib\inftrees.c" />
+    <ClCompile Include="ZLib\trees.c" />
+    <ClCompile Include="ZLib\uncompr.c" />
+    <ClCompile Include="ZLib\zutil.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Encoding.h" />
+    <ClInclude Include="WinZip\crypt.h" />
+    <ClInclude Include="WinZip\ioapi.h" />
+    <ClInclude Include="WinZip\iowin32.h" />
+    <ClInclude Include="WinZip\mztools.h" />
+    <ClInclude Include="WinZip\unzip.h" />
+    <ClInclude Include="WinZip\zip.h" />
+    <ClInclude Include="ZLibWrapLib.h" />
+    <ClInclude Include="ZLib\crc32.h" />
+    <ClInclude Include="ZLib\deflate.h" />
+    <ClInclude Include="ZLib\gzguts.h" />
+    <ClInclude Include="ZLib\inffast.h" />
+    <ClInclude Include="ZLib\inffixed.h" />
+    <ClInclude Include="ZLib\inflate.h" />
+    <ClInclude Include="ZLib\inftrees.h" />
+    <ClInclude Include="ZLib\trees.h" />
+    <ClInclude Include="ZLib\zconf.h" />
+    <ClInclude Include="ZLib\zlib.h" />
+    <ClInclude Include="ZLib\zutil.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
