@@ -2,11 +2,17 @@
 //
 
 #include "stdafx.h"
-#include "ZLib.h"
+#include "TestZip\TestZip.h"
+#include "TestBoost\TestBoost.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	BOOL bRet = ZipExtract(L"G:\\MCC18.zip", L"G:\\");
+#ifdef TEST_ZIP
+	TestZip();
+#endif
+#ifdef TEST_BOOST
+	TestBoost();
+#endif
 	return 0;
 }
 
