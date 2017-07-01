@@ -87,6 +87,7 @@
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TestBoost\FileSystem\TestFileSystem.h" />
     <ClInclude Include="TestBoost\Function\TestFunction.h" />
     <ClInclude Include="TestBoost\Log\TestLog.h" />
     <ClInclude Include="TestBoost\SmartPtr\TestSmartPtr.h" />
