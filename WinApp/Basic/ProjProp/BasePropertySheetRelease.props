@@ -14,7 +14,7 @@
     <Link>
       <AdditionalLibraryDirectories>$(SolutionDir)..\Basic\Lib;$(SolutionDir)..\Basic\Include\boost\stage\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(SolutionDir)..\Basic\Output\Bin\$(TargetName).pdb</ProgramDatabaseFile>
-      <AdditionalDependencies>boost_log-vc120-mt-1_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>boost_log-vc120-mt-1_64.lib;boost_log_setup-vc120-mt-1_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <OutputFile>$(SolutionDir)..\Basic\Lib\$(TargetName)$(TargetExt)</OutputFile>
