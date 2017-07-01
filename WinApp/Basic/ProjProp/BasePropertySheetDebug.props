@@ -8,11 +8,13 @@
   <ItemDefinitionGroup>
     <ClCompile>
       <AdditionalIncludeDirectories>$(SolutionDir)..\Basic\Include;$(SolutionDir)..\Basic\Include\boost;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>BOOST_LOG_DYN_LINK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link />
     <Link>
-      <AdditionalLibraryDirectories>$(SolutionDir)..\Basic\Lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\Basic\Lib\;$(SolutionDir)..\Basic\Include\boost\stage\lib\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ProgramDatabaseFile>$(SolutionDir)..\Basic\Output\Debug\$(TargetName).pdb</ProgramDatabaseFile>
+      <AdditionalDependencies>boost_log-vc120-mt-gd-1_64.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <Lib>
       <OutputFile>$(SolutionDir)..\Basic\Lib\$(TargetName)D$(TargetExt)</OutputFile>
