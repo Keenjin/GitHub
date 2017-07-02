@@ -4,6 +4,7 @@
 #include "Function/TestFunction.h"
 #include "Log/TestLog.h"
 #include "FileSystem/TestFileSystem.h"
+#include "Format/TestFormat.h"
 
 void TestBoost()
 {
@@ -11,5 +12,6 @@ void TestBoost()
 	//TestFunction(true);
 	//TestFunction(false);
 	//TestLog();
-	TestFileSystem();
+	//TestFileSystem();
+	TestFormat();
 }
