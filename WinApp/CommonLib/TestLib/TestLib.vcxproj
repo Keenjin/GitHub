@@ -94,6 +94,7 @@
     <ClInclude Include="TestBoost\SmartPtr\TestSmartPtr.h" />
     <ClInclude Include="TestBoost\TestBoost.h" />
     <ClInclude Include="TestSTL\regex\TestRegEx.h" />
+    <ClInclude Include="TestSTL\string\TestString.h" />
     <ClInclude Include="TestSTL\TestSTL.h" />
     <ClInclude Include="TestZip\TestZip.h" />
   </ItemGroup>
