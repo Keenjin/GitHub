@@ -4,6 +4,7 @@
 #include "stdafx.h"
 #include "TestZip\TestZip.h"
 #include "TestBoost\TestBoost.h"
+#include "TestSTL\TestSTL.h"
 
 int _tmain(int argc, _TCHAR* argv[])
 {
@@ -12,6 +13,9 @@ int _tmain(int argc, _TCHAR* argv[])
 #endif
 #ifdef TEST_BOOST
 	TestBoost();
+#endif
+#ifdef TEST_STL
+	TestSTL();
 #endif
 	return 0;
 }

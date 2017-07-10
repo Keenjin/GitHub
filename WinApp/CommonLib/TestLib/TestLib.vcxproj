@@ -93,6 +93,8 @@
     <ClInclude Include="TestBoost\Log\TestLog.h" />
     <ClInclude Include="TestBoost\SmartPtr\TestSmartPtr.h" />
     <ClInclude Include="TestBoost\TestBoost.h" />
+    <ClInclude Include="TestSTL\regex\TestRegEx.h" />
+    <ClInclude Include="TestSTL\TestSTL.h" />
     <ClInclude Include="TestZip\TestZip.h" />
   </ItemGroup>
   <ItemGroup>
@@ -102,6 +104,7 @@
     </ClCompile>
     <ClCompile Include="TestBoost\TestBoost.cpp" />
     <ClCompile Include="TestLib.cpp" />
+    <ClCompile Include="TestSTL\TestSTL.cpp" />
     <ClCompile Include="TestZip\TestZip.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
