@@ -1,0 +1,86 @@
+;
+; 4_kbddriver_hook_class.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=4_kbddriver_hook_class.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+4_kbddriver_hook_class_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+4_kbddriver_hook_class.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%4_kbddriver_hook_class.DeviceDesc%=4_kbddriver_hook_class_Device, Root\4_kbddriver_hook_class ; TODO: edit hw-id
+
+[4_kbddriver_hook_class_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+4_kbddriver_hook_class.sys
+
+;-------------- Service installation
+[4_kbddriver_hook_class_Device.NT.Services]
+AddService = 4_kbddriver_hook_class,%SPSVCINST_ASSOCSERVICE%, 4_kbddriver_hook_class_Service_Inst
+
+; -------------- 4_kbddriver_hook_class driver install sections
+[4_kbddriver_hook_class_Service_Inst]
+DisplayName    = %4_kbddriver_hook_class.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\4_kbddriver_hook_class.sys
+
+;
+;--- 4_kbddriver_hook_class_Device Coinstaller installation ------
+;
+
+[4_kbddriver_hook_class_Device.NT.CoInstallers]
+AddReg=4_kbddriver_hook_class_Device_CoInstaller_AddReg
+CopyFiles=4_kbddriver_hook_class_Device_CoInstaller_CopyFiles
+
+[4_kbddriver_hook_class_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[4_kbddriver_hook_class_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[4_kbddriver_hook_class_Device.NT.Wdf]
+KmdfService =  4_kbddriver_hook_class, 4_kbddriver_hook_class_wdfsect
+[4_kbddriver_hook_class_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "4_kbddriver_hook_class Installation Disk"
+4_kbddriver_hook_class.DeviceDesc = "4_kbddriver_hook_class Device"
+4_kbddriver_hook_class.SVCDESC = "4_kbddriver_hook_class Service"

@@ -93,6 +93,7 @@
     <ClInclude Include="TestBoost\Log\TestLog.h" />
     <ClInclude Include="TestBoost\SmartPtr\TestSmartPtr.h" />
     <ClInclude Include="TestBoost\TestBoost.h" />
+    <ClInclude Include="TestSTL\algorithm\TestAlgorithm.h" />
     <ClInclude Include="TestSTL\regex\TestRegEx.h" />
     <ClInclude Include="TestSTL\string\TestString.h" />
     <ClInclude Include="TestSTL\TestSTL.h" />
