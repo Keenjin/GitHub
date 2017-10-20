@@ -1,0 +1,86 @@
+;
+; 6_HelloDDK.inf
+;
+
+[Version]
+Signature="$WINDOWS NT$"
+Class=Sample ; TODO: edit Class
+ClassGuid={78A1C341-4539-11d3-B88D-00C04FAD5171} ; TODO: edit ClassGuid
+Provider=%ManufacturerName%
+CatalogFile=6_HelloDDK.cat
+DriverVer= ; TODO: set DriverVer in stampinf property pages
+
+[DestinationDirs]
+DefaultDestDir = 12
+6_HelloDDK_Device_CoInstaller_CopyFiles = 11
+
+; ================= Class section =====================
+
+[ClassInstall32]
+Addreg=SampleClassReg
+
+[SampleClassReg]
+HKR,,,0,%ClassName%
+HKR,,Icon,,-5
+
+[SourceDisksNames]
+1 = %DiskName%,,,""
+
+[SourceDisksFiles]
+6_HelloDDK.sys  = 1,,
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll=1 ; make sure the number matches with SourceDisksNames
+
+;*****************************************
+; Install Section
+;*****************************************
+
+[Manufacturer]
+%ManufacturerName%=Standard,NT$ARCH$
+
+[Standard.NT$ARCH$]
+%6_HelloDDK.DeviceDesc%=6_HelloDDK_Device, Root\6_HelloDDK ; TODO: edit hw-id
+
+[6_HelloDDK_Device.NT]
+CopyFiles=Drivers_Dir
+
+[Drivers_Dir]
+6_HelloDDK.sys
+
+;-------------- Service installation
+[6_HelloDDK_Device.NT.Services]
+AddService = 6_HelloDDK,%SPSVCINST_ASSOCSERVICE%, 6_HelloDDK_Service_Inst
+
+; -------------- 6_HelloDDK driver install sections
+[6_HelloDDK_Service_Inst]
+DisplayName    = %6_HelloDDK.SVCDESC%
+ServiceType    = 1               ; SERVICE_KERNEL_DRIVER
+StartType      = 3               ; SERVICE_DEMAND_START
+ErrorControl   = 1               ; SERVICE_ERROR_NORMAL
+ServiceBinary  = %12%\6_HelloDDK.sys
+
+;
+;--- 6_HelloDDK_Device Coinstaller installation ------
+;
+
+[6_HelloDDK_Device.NT.CoInstallers]
+AddReg=6_HelloDDK_Device_CoInstaller_AddReg
+CopyFiles=6_HelloDDK_Device_CoInstaller_CopyFiles
+
+[6_HelloDDK_Device_CoInstaller_AddReg]
+HKR,,CoInstallers32,0x00010000, "WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll,WdfCoInstaller"
+
+[6_HelloDDK_Device_CoInstaller_CopyFiles]
+WdfCoInstaller$KMDFCOINSTALLERVERSION$.dll
+
+[6_HelloDDK_Device.NT.Wdf]
+KmdfService =  6_HelloDDK, 6_HelloDDK_wdfsect
+[6_HelloDDK_wdfsect]
+KmdfLibraryVersion = $KMDFVERSION$
+
+[Strings]
+SPSVCINST_ASSOCSERVICE= 0x00000002
+ManufacturerName="<Your manufacturer name>" ;TODO: Replace with your manufacturer name
+ClassName="Samples" ; TODO: edit ClassName
+DiskName = "6_HelloDDK Installation Disk"
+6_HelloDDK.DeviceDesc = "6_HelloDDK Device"
+6_HelloDDK.SVCDESC = "6_HelloDDK Service"
