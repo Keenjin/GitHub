@@ -22,13 +22,21 @@ extern "C"
 #define arraysize(p) (sizeof(p) / sizeof((p)[0]))
 
 // 自定义设备扩展
+#define MAX_FILE_LENGTH	1024
 typedef struct _DEVICE_EXTENSION {
 	PDEVICE_OBJECT pDevice;
 	UNICODE_STRING ustrDeviceName;		// 设备名，可以在设备管理器中显示的名字
 	UNICODE_STRING ustrSymLinkName;		// 符号链接名，用于ring3层访问设备对象的
+
+	PUCHAR buffer;//缓冲区
+	ULONG file_length;//模拟的文件长度，必须小于MAX_FILE_LENGTH
 } DEVICE_EXTENSION, *PDEVICE_EXTENSION;
 
 // 函数声明
 NTSTATUS CreateDevice(IN PDRIVER_OBJECT pDriverObject);
 VOID HelloDDKUnload(IN PDRIVER_OBJECT pDriverObject);
 NTSTATUS HelloDDKDispatchRoutine(IN PDEVICE_OBJECT pDevObj, IN PIRP pIrp);
+NTSTATUS HelloDDKRead(IN PDEVICE_OBJECT pDevObj, IN PIRP pIrp);
+NTSTATUS HelloDDKWrite(IN PDEVICE_OBJECT pDevObj, IN PIRP pIrp);
+NTSTATUS HelloDDKQueryInformation(IN PDEVICE_OBJECT pDevObj, IN PIRP pIrp);
+NTSTATUS HelloDDKDeviceControl(IN PDEVICE_OBJECT pDevObj, IN PIRP pIrp);

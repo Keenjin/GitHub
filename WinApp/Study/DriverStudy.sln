@@ -23,6 +23,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6_HelloWDM", "6_HelloWDM\6_
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "6_LoadNTDriver", "6_LoadNTDriver\6_LoadNTDriver.vcxproj", "{25554816-F066-46A6-939B-C6E11708C4F8}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "8_OpenDevice", "8_OpenDevice\8_OpenDevice.vcxproj", "{06EFC509-8D08-4691-B94B-F8B1188E13B6}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|ARM = Debug|ARM
@@ -263,6 +265,18 @@ Global
 		{25554816-F066-46A6-939B-C6E11708C4F8}.Release|x64.Build.0 = Release|x64
 		{25554816-F066-46A6-939B-C6E11708C4F8}.Release|x86.ActiveCfg = Release|Win32
 		{25554816-F066-46A6-939B-C6E11708C4F8}.Release|x86.Build.0 = Release|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|ARM.ActiveCfg = Debug|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|ARM64.ActiveCfg = Debug|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|x64.ActiveCfg = Debug|x64
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|x64.Build.0 = Debug|x64
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|x86.ActiveCfg = Debug|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Debug|x86.Build.0 = Debug|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|ARM.ActiveCfg = Release|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|ARM64.ActiveCfg = Release|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|x64.ActiveCfg = Release|x64
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|x64.Build.0 = Release|x64
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|x86.ActiveCfg = Release|Win32
+		{06EFC509-8D08-4691-B94B-F8B1188E13B6}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

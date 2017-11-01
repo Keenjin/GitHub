@@ -24,6 +24,11 @@ extern "C" NTSTATUS DriverEntry(		// 特定的回调函数，都需要编译成C的函数命名
 	pDriverObject->MajorFunction[IRP_MJ_CLOSE] = HelloWDMDispatchRoutine;
 	pDriverObject->MajorFunction[IRP_MJ_WRITE] = HelloWDMDispatchRoutine;
 	pDriverObject->MajorFunction[IRP_MJ_READ] = HelloWDMDispatchRoutine;
+	pDriverObject->MajorFunction[IRP_MJ_CLEANUP] = HelloWDMDispatchRoutine;
+	pDriverObject->MajorFunction[IRP_MJ_DEVICE_CONTROL] = HelloWDMDispatchRoutine;
+	pDriverObject->MajorFunction[IRP_MJ_SET_INFORMATION] = HelloWDMDispatchRoutine;
+	pDriverObject->MajorFunction[IRP_MJ_SHUTDOWN] = HelloWDMDispatchRoutine;
+	pDriverObject->MajorFunction[IRP_MJ_SYSTEM_CONTROL] = HelloWDMDispatchRoutine;
 
 	pDriverObject->DriverUnload = HelloWDMUnload;
 
@@ -211,6 +216,49 @@ NTSTATUS HelloWDMDispatchRoutine(IN PDEVICE_OBJECT fdo,
 	PAGED_CODE();
 
 	KdPrint(("Enter HelloWDMDispatchRoutine\n"));
+
+	PIO_STACK_LOCATION stack = IoGetCurrentIrpStackLocation(pIrp);
+
+	static char* irpname[] = {
+		"IRP_MJ_CREATE",
+		"IRP_MJ_CREATE_NAMED_PIPE",
+		"IRP_MJ_CLOSE",
+		"IRP_MJ_READ",
+		"IRP_MJ_WRITE",
+		"IRP_MJ_QUERY_INFORMATION",
+		"IRP_MJ_SET_INFORMATION",
+		"IRP_MJ_QUERY_EA",
+		"IRP_MJ_SET_EA",
+		"IRP_MJ_FLUSH_BUFFERS",
+		"IRP_MJ_QUERY_VOLUME_INFORMATION",
+		"IRP_MJ_SET_VOLUME_INFORMATION",
+		"IRP_MJ_DIRECTORY_CONTROL",
+		"IRP_MJ_FILE_SYSTEM_CONTROL",
+		"IRP_MJ_DEVICE_CONTROL",
+		"IRP_MJ_INTERNAL_DEVICE_CONTROL",
+		"IRP_MJ_SHUTDOWN",
+		"IRP_MJ_LOCK_CONTROL",
+		"IRP_MJ_CLEANUP",
+		"IRP_MJ_CREATE_MAILSLOT",
+		"IRP_MJ_QUERY_SECURITY",
+		"IRP_MJ_SET_SECURITY",
+		"IRP_MJ_POWER",
+		"IRP_MJ_SYSTEM_CONTROL",
+		"IRP_MJ_DEVICE_CHANGE",
+		"IRP_MJ_QUERY_QUOTA",
+		"IRP_MJ_SET_QUOTA",
+		"IRP_MJ_PNP"
+	};
+
+	UCHAR type = stack->MajorFunction;
+	if (type >= arraysize(irpname))
+	{
+		KdPrint(("Unknown irp, major type %x\n", type));
+	}
+	else
+	{
+		KdPrint(("irpname: %s\n", irpname[type]));
+	}
 
 	NTSTATUS status = STATUS_SUCCESS;
 
