@@ -1,0 +1,130 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{db2a3291-6cc7-435e-985f-c82016493793}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="App">
+      <UniqueIdentifier>{f69a20f4-1e91-4577-acca-d820973bd6f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Policy">
+      <UniqueIdentifier>{4c22a166-80b5-4057-bf7e-a9f68d9b7e5f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Policy\PolicyItem">
+      <UniqueIdentifier>{a491127a-7b97-4f5b-91ad-21387596a877}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Policy\PolicyObj">
+      <UniqueIdentifier>{bfa114ff-fc54-4c53-bce2-34f957b951f4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="MSAATest.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="HelpApi.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="WinEventHook.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="WinEventApp.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PreFilterPolicy.h">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicyMgr.h">
+      <Filter>Policy</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicyObj.h">
+      <Filter>Policy\PolicyObj</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicyObjImpl.h">
+      <Filter>Policy\PolicyObj</Filter>
+    </ClInclude>
+    <ClInclude Include="IUnknownImpl.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicyBase.h">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoCriticalSection.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicySchedule.h">
+      <Filter>Policy</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="MSAATest.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="HelpApi_ProcThread.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="HelpApi_WndEvent.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="WinEventHook.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="WinEventApp.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="PreFilterPolicy.cpp">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClCompile>
+    <ClCompile Include="PolicyMgr.cpp">
+      <Filter>Policy</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="MSAATest.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="small.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+    <Image Include="MSAATest.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

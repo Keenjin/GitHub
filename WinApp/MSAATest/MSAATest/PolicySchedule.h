@@ -30,7 +30,6 @@ public:
 
 			m_pObj = pobj;
 			m_fProc = fn;
-			m_eventTask.Create(FALSE, FALSE);
 			m_eventQuit.Create(TRUE, TRUE);
 			hr = Start(this);
 
@@ -70,28 +69,22 @@ public:
 			CAutoCriticalSection lock(m_csTaskObjs);
 			m_qTaskObjs.push(obj);
 		}
-		
-		m_eventTask.SetEvent();
 	}
 
-	virtual void ThreadProc()
+	virtual void ThreadProc(unsigned int nIndex)
 	{
 		while (!IsQuit())
 		{
-			m_eventTask.Wait(INFINITE);
-			DWORD dwIndex = Wait(FALSE, INFINITE);
-			dwIndex -= WAIT_OBJECT_0;
-			if (dwIndex >= 0 && dwIndex < cThreadCnt)
+			WaitEvent(nIndex, INFINITE);
+			
+			TObj obj;
 			{
-				TObj obj;
-				{
-					CAutoCriticalSection lock(m_csQuit);
-					obj = m_qTaskObjs.front();
-					m_qTaskObjs.pop();
-				}
-				
-				(m_pObj->*m_fProc)(obj);
+				CAutoCriticalSection lock(m_csQuit);
+				obj = m_qTaskObjs.front();
+				m_qTaskObjs.pop();
 			}
+
+			(m_pObj->*m_fProc)(obj);
 		}
 
 		m_eventQuit.SetEvent();
@@ -114,8 +107,6 @@ private:
 
 	T* m_pObj;
 	fPolicyProc	m_fProc;
-
-	CEvent	m_eventTask;
 
 	CComAutoCriticalSection	m_csQuit;
 	CEvent	m_eventQuit;

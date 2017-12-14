@@ -9,6 +9,12 @@ public:
 	virtual void ThreadProc() = 0;
 };
 
+class IThreadProcCallbackEx
+{
+public:
+	virtual void ThreadProc(unsigned int nIndex) = 0;
+};
+
 class CThread : public IThreadProcCallback
 {
 public:
@@ -29,21 +35,31 @@ protected:
 	HANDLE	m_hThread;
 };
 
+typedef struct _THREAD_PROC_PARAM
+{
+	IThreadProcCallbackEx* pCallbackObj;
+	DWORD	dwIndex;
+	CEvent	event;
+}THREAD_PROC_PARAM, *PTHREAD_PROC_PARAM;
+
 template<UINT cThreadCnt = 1>
-class CMutiThread : public IThreadProcCallback
+class CMutiThread : public IThreadProcCallbackEx
 {
 public:
 	CMutiThread() {}
 	virtual ~CMutiThread() {}
 
-	HRESULT Start(IThreadProcCallback* pThis)
+	HRESULT Start(IThreadProcCallbackEx* pThis)
 	{
 		HRESULT hr = S_OK;
 
 		for (size_t i = 0; i < cThreadCnt; i++)
 		{
 			unsigned int uiTID = 0;
-			m_hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, __THREAD_PROC, pThis, 0, &uiTID);
+			m_threadParam[i].event.Create(FALSE, FALSE);
+			m_threadParam[i].pCallbackObj = pThis;
+			m_threadParam[i].dwIndex = i;
+			m_hThreads[i] = (HANDLE)_beginthreadex(NULL, 0, __MUL_THREAD_PROC, &m_threadParam[i], 0, &uiTID);
 			if (m_hThreads[i] == INVALID_HANDLE_VALUE || m_hThreads[i] == NULL)
 			{
 				hr = E_FAIL;
@@ -53,6 +69,14 @@ public:
 
 		return hr;
 	}
+	DWORD WaitEvent(DWORD dwIndex, DWORD dwMilliseconds)
+	{
+		if (dwIndex < cThreadCnt)
+		{
+			return m_threadParam[i].event.Wait(dwMilliseconds);
+		}
+		return WAIT_FAILED;
+	}
 	DWORD Wait(BOOL bWaitAll, DWORD dwMilliseconds)
 	{
 		return WaitForMultipleObjects(cThreadCnt, m_hThreads, bWaitAll, dwMilliseconds);
@@ -61,17 +85,20 @@ public:
 	{
 		for (size_t i = 0; i < cThreadCnt; i++)
 		{
+			m_event[i].Destroy();
 			if (m_hThreads[i])
 			{
 				CloseHandle(m_hThreads[i]);
+				m_hThreads[i] = NULL;
 			}
-			m_hThreads[i] = NULL;
 		}
 	}
 
-	virtual void ThreadProc() {};
+	virtual void ThreadProc(unsigned int nIndex) {};
 
 protected:
 	HANDLE	m_hThreads[cThreadCnt];
+	THREAD_PROC_PARAM	m_threadParam[cThreadCnt];
+	CEvent	m_event[cThreadCnt];
 };
 

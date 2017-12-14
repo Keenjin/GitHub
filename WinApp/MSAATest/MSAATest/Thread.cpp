@@ -13,6 +13,18 @@ unsigned __stdcall __THREAD_PROC(void* pArguments)
 	return 0;
 }
 
+unsigned __stdcall __MUL_THREAD_PROC(void* pArguments)
+{
+	THREAD_PROC_PARAM* pThis = (THREAD_PROC_PARAM*)pArguments;
+	if (pThis)
+	{
+		pThis->pCallbackObj->ThreadProc(pThis->dwIndex);
+	}
+
+	_endthreadex(0);
+	return 0;
+}
+
 
 CThread::CThread()
 	: m_nThreadID(0)
