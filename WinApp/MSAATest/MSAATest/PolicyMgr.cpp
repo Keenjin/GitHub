@@ -26,7 +26,12 @@ HRESULT CPolicyMgr::Init()
 
 	do
 	{
-		if (FAILED(m_PolicySched.Create(this, &CPolicyMgr::OnHandlePolicy)))
+		if (FAILED(m_TaskPool.Create(this, &CPolicyMgr::OnHandlePolicy, &m_TaskContainer)))
+		{
+			break;
+		}
+
+		if (FAILED(m_PolicySched.Init()))
 		{
 			break;
 		}
@@ -46,8 +51,8 @@ HRESULT CPolicyMgr::Init()
 void CPolicyMgr::UnInit()
 {
 	LOG_PRINT(L"Enter %s", __FUNCTIONW__);
-
-	m_PolicySched.Destroy();
+	m_PolicySched.UnInit();
+	m_TaskPool.Destroy();
 }
 
 BOOL CPolicyMgr::IsEventOfWindow(DWORD event, HWND hwnd,
@@ -72,14 +77,20 @@ HRESULT CPolicyMgr::Fire(DWORD event, HWND hwnd,
 		return E_FAIL;
 	}
 
-	LOG_PRINT(L"Enter %s, event(%s),hwnd(0x%0x),idObject(%s),idChild(%s),dwEventThread(%d),CurrentThread(%d)", 
+	/*LOG_PRINT(L"Enter %s, event(%s),hwnd(0x%0x),idObject(%s),idChild(%s),dwEventThread(%d),CurrentThread(%d)", 
 		__FUNCTIONW__, 
 		HELP_API::WND_EVENT_API::WndEventName(event),
 		hwnd,
 		HELP_API::WND_EVENT_API::CtrlObjectName(idObject),
 		HELP_API::WND_EVENT_API::ChildIDName(idChild),
 		dwEventThread,
-		GetCurrentThreadId());
+		GetCurrentThreadId());*/
+
+	// 任务堆积，或CPU使用率比较高，需要做平滑处理
+	if (m_TaskContainer.GetCount() > 1000 || m_CpuSmooth.IsProcCpuHigh(NULL, 5))
+	{
+		m_CpuSmooth.Sleep(100);
+	}
 
 	CComPtr<IPolicyObj> pObj;
 	if (FAILED(CPolicyObj::Create(&pObj)))
@@ -94,7 +105,9 @@ HRESULT CPolicyMgr::Fire(DWORD event, HWND hwnd,
 	pObj->SetParam(POLICY_INDEX_TID, CComVariant((unsigned int)dwEventThread));
 
 	// 往任务队列里面塞任务
-	m_PolicySched.AddTask(pObj);
+	m_TaskPool.AddTask(pObj);
+
+	LOG_PRINT(L"%s, taskcnt(%d)", __FUNCTIONW__, m_TaskContainer.GetCount());
 
 	return S_OK;
 }
@@ -120,4 +133,15 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 		HELP_API::WND_EVENT_API::ChildIDName(dwIdChild),
 		dwThreadID,
 		GetCurrentThreadId());
+
+	for (;;)
+	{
+		// 调用策略，不断执行下去，直到最后完成，跳出循环
+		CPolicyBase* pPolicyHandle = GetNextPolicy(pObj);
+		if (!pPolicyHandle)
+		{
+			break;
+		}
+		pPolicyHandle->PolicyHandler(pObj);
+	}
 }

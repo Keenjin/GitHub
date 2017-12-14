@@ -28,6 +28,15 @@
     <Filter Include="Policy\PolicyObj">
       <UniqueIdentifier>{bfa114ff-fc54-4c53-bce2-34f957b951f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Async">
+      <UniqueIdentifier>{82007b92-eae6-46f7-b0da-66148c65e1fa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common\Thread">
+      <UniqueIdentifier>{7cde61eb-6d28-4b40-80b0-07c26543296f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Policy\PolicyConfig">
+      <UniqueIdentifier>{fd614e6c-ef6f-49ab-b229-80934e2e542e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -54,9 +63,6 @@
     <ClInclude Include="WinEventApp.h">
       <Filter>App</Filter>
     </ClInclude>
-    <ClInclude Include="Thread.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="PreFilterPolicy.h">
       <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
@@ -75,14 +81,35 @@
     <ClInclude Include="PolicyBase.h">
       <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
+    <ClInclude Include="AutoCriticalSection.h">
+      <Filter>Common\Async</Filter>
+    </ClInclude>
     <ClInclude Include="Event.h">
+      <Filter>Common\Async</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskPool.h">
+      <Filter>Common\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Common\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskContainer.h">
+      <Filter>Common\Thread</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskContainerImpl.h">
+      <Filter>Policy</Filter>
+    </ClInclude>
+    <ClInclude Include="Log.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="AutoCriticalSection.h">
+    <ClInclude Include="CpuSmooth.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="PolicySchedule.h">
-      <Filter>Policy</Filter>
+      <Filter>Policy\PolicyConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="PolicyConfig.h">
+      <Filter>Policy\PolicyConfig</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -104,14 +131,23 @@
     <ClCompile Include="WinEventApp.cpp">
       <Filter>App</Filter>
     </ClCompile>
-    <ClCompile Include="Thread.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="PreFilterPolicy.cpp">
       <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
     <ClCompile Include="PolicyMgr.cpp">
       <Filter>Policy</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Common\Thread</Filter>
+    </ClCompile>
+    <ClCompile Include="TaskContainerImpl.cpp">
+      <Filter>Policy</Filter>
+    </ClCompile>
+    <ClCompile Include="PolicySchedule.cpp">
+      <Filter>Policy\PolicyConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="PolicyConfig.cpp">
+      <Filter>Policy\PolicyConfig</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -126,5 +162,10 @@
     <Image Include="MSAATest.ico">
       <Filter>资源文件</Filter>
     </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="PolicyConfig.xml">
+      <Filter>Policy\PolicyConfig</Filter>
+    </Xml>
   </ItemGroup>
 </Project>

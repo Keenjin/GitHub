@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Config version="1">
+  <Policy>
+    <PolicyGroup name="前置过滤分组">
+      <PolicyItem name="前置过滤策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+    </PolicyGroup>
+    <PolicyGroup name="广告拦截分组">
+      <PolicyItem name="白名单过滤策略" guid="{AE2C247B-34FC-4576-A5A1-FA31EDA5C828}" />
+      <PolicyItem name="运营规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="本地规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="云查协议策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="浮条规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+    </PolicyGroup>
+    <PolicyGroup name="宏提醒分组">
+      <PolicyItem name="白名单过滤策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="运营规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+    </PolicyGroup>
+    <PolicyGroup name="窗口数据收集分组">
+      <PolicyItem name="白名单过滤策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="运营规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+    </PolicyGroup>
+    <PolicyGroup name="购物红包拦截分组">
+      <PolicyItem name="白名单过滤策略" guid="{AE2C247B-34FC-4576-A5A1-FA31EDA5C828}" />
+      <PolicyItem name="运营规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="本地规则策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+    </PolicyGroup>
+  </Policy>
+</Config>

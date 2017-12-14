@@ -1,5 +1,6 @@
 #pragma once
 #include <vector>
+#include "Event.h"
 
 unsigned __stdcall __THREAD_PROC(void* pArguments);
 
@@ -35,6 +36,8 @@ protected:
 	HANDLE	m_hThread;
 };
 
+unsigned __stdcall __MUL_THREAD_PROC(void* pArguments);
+
 typedef struct _THREAD_PROC_PARAM
 {
 	IThreadProcCallbackEx* pCallbackObj;
@@ -46,7 +49,7 @@ template<UINT cThreadCnt = 1>
 class CMutiThread : public IThreadProcCallbackEx
 {
 public:
-	CMutiThread() {}
+	CMutiThread() : m_bStop(FALSE) {}
 	virtual ~CMutiThread() {}
 
 	HRESULT Start(IThreadProcCallbackEx* pThis)
@@ -73,9 +76,26 @@ public:
 	{
 		if (dwIndex < cThreadCnt)
 		{
-			return m_threadParam[i].event.Wait(dwMilliseconds);
+			return m_threadParam[dwIndex].event.Wait(dwMilliseconds);
 		}
 		return WAIT_FAILED;
+	}
+	BOOL SetEvent(DWORD dwIndex)
+	{
+		if (dwIndex >= cThreadCnt)
+		{
+			return FALSE;
+		}
+		return m_threadParam[dwIndex].event.Set();
+	}
+	BOOL SetEventAll()
+	{
+		BOOL bRet = TRUE;
+		for (size_t i = 0; i < cThreadCnt; i++)
+		{
+			bRet &= m_threadParam[i].event.Set();
+		}
+		return bRet;
 	}
 	DWORD Wait(BOOL bWaitAll, DWORD dwMilliseconds)
 	{
@@ -83,6 +103,9 @@ public:
 	}
 	void Stop()
 	{
+		InterlockedExchange((volatile long*)&m_bStop, TRUE);
+		SetEventAll();
+		Wait(TRUE, INFINITE);
 		for (size_t i = 0; i < cThreadCnt; i++)
 		{
 			m_event[i].Destroy();
@@ -93,6 +116,12 @@ public:
 			}
 		}
 	}
+	BOOL IsStop()
+	{
+		BOOL bQuit = FALSE;
+		InterlockedExchange((volatile long*)&bQuit, m_bStop);
+		return bQuit;
+	}
 
 	virtual void ThreadProc(unsigned int nIndex) {};
 
@@ -100,5 +129,6 @@ protected:
 	HANDLE	m_hThreads[cThreadCnt];
 	THREAD_PROC_PARAM	m_threadParam[cThreadCnt];
 	CEvent	m_event[cThreadCnt];
+	BOOL	m_bStop;
 };
 

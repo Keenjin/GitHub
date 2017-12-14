@@ -81,19 +81,25 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoCriticalSection.h" />
+    <ClInclude Include="CpuSmooth.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="HelpApi.h" />
     <ClInclude Include="IUnknownImpl.h" />
+    <ClInclude Include="Log.h" />
     <ClInclude Include="MSAATest.h" />
     <ClInclude Include="PolicyBase.h" />
+    <ClInclude Include="PolicyConfig.h" />
     <ClInclude Include="PolicyMgr.h" />
     <ClInclude Include="PolicyObj.h" />
     <ClInclude Include="PolicyObjImpl.h" />
+    <ClInclude Include="PolicySchedule.h" />
     <ClInclude Include="PreFilterPolicy.h" />
     <ClInclude Include="Resource.h" />
-    <ClInclude Include="PolicySchedule.h" />
+    <ClInclude Include="TaskContainerImpl.h" />
+    <ClInclude Include="TaskPool.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="TaskContainer.h" />
     <ClInclude Include="Thread.h" />
     <ClInclude Include="WinEventApp.h" />
     <ClInclude Include="WinEventHook.h" />
@@ -102,12 +108,15 @@
     <ClCompile Include="HelpApi_ProcThread.cpp" />
     <ClCompile Include="HelpApi_WndEvent.cpp" />
     <ClCompile Include="MSAATest.cpp" />
+    <ClCompile Include="PolicyConfig.cpp" />
     <ClCompile Include="PolicyMgr.cpp" />
+    <ClCompile Include="PolicySchedule.cpp" />
     <ClCompile Include="PreFilterPolicy.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="TaskContainerImpl.cpp" />
     <ClCompile Include="Thread.cpp" />
     <ClCompile Include="WinEventApp.cpp" />
     <ClCompile Include="WinEventHook.cpp" />
@@ -118,6 +127,9 @@
   <ItemGroup>
     <Image Include="MSAATest.ico" />
     <Image Include="small.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Xml Include="PolicyConfig.xml" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

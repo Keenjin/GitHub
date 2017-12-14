@@ -1,5 +1,9 @@
 #pragma once
 #include "PolicyObj.h"
+#include "TaskPool.h"
+#include "TaskContainerImpl.h"
+#include "CpuSmooth.h"
+#include "PolicyBase.h"
 #include "PolicySchedule.h"
 
 class CPolicyMgr
@@ -25,6 +29,9 @@ private:
 		DWORD dwEventThread);
 
 private:
-	CPolicySchedule<CPolicyMgr, CComPtr<IPolicyObj>>	m_PolicySched;
+	CTaskPool<CPolicyMgr, CComPtr<IPolicyObj>, CTaskContainerImpl>	m_TaskPool;
+	CTaskContainerImpl	m_TaskContainer;
+	CCpuSmooth	m_CpuSmooth;
+	CPolicySchedule	m_PolicySched;
 };
 

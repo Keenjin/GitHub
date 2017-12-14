@@ -1,7 +1,9 @@
 #pragma once
 #include "PolicyObj.h"
+#include "IUnknownImpl.h"
 
 class CPolicyBase
+	: public IUnknownImplT<IUnknown>
 {
 public:
 	virtual HRESULT STDMETHODCALLTYPE Init() { return S_OK; };

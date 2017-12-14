@@ -5,7 +5,7 @@
 
 typedef struct _ID_NAME
 {
-	DWORD dwID;
+	LONG dwID;
 	CAtlString strName;
 }ID_NAME, *PID_NAME;
 

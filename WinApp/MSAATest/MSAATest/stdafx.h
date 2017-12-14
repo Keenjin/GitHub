@@ -23,7 +23,4 @@
 #include <atlstr.h>
 
 // TODO:  在此处引用程序需要的其他头文件
-#define LOG_PRINT(format, ...)	\
-	{CAtlString strLog;	\
-	strLog.Format(format L"\n", __VA_ARGS__);		\
-	OutputDebugString(strLog);}
+#include "Log.h"

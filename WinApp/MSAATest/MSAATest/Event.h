@@ -17,12 +17,12 @@ public:
 		return ((m_hEvent != INVALID_HANDLE_VALUE) && (m_hEvent != NULL));
 	}
 
-	BOOL SetEvent()
+	BOOL Set()
 	{
 		return ::SetEvent(m_hEvent);
 	}
 
-	BOOL ResetEvent()
+	BOOL Reset()
 	{
 		return ::ResetEvent(m_hEvent);
 	}

@@ -1,0 +1,105 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="TestBoost">
+      <UniqueIdentifier>{ee1a23aa-c89e-462a-a82a-f27eb6611bfd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestZip">
+      <UniqueIdentifier>{461236a0-3d97-4020-9b9e-a106d26deb5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestBoost\Log">
+      <UniqueIdentifier>{a6597502-243e-49e2-9afb-60b9bb2d5daa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestBoost\SmartPtr">
+      <UniqueIdentifier>{4fd5fe6a-75a7-4ffb-bcc3-d71486cec713}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestBoost\FileSystem">
+      <UniqueIdentifier>{2dc37262-4665-40cc-af6f-6ce9f2c216e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestBoost\Function">
+      <UniqueIdentifier>{5527711e-bd50-46e7-892e-a8e866d84744}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestBoost\Format">
+      <UniqueIdentifier>{1c0d3ace-e5d5-4a4e-a499-052b51e34510}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestSTL">
+      <UniqueIdentifier>{a53067b8-b093-4871-b14f-9688b9622b3d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestSTL\regex">
+      <UniqueIdentifier>{64fdd22d-3df0-4564-a791-dfb38c58dd27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="TestSTL\string">
+      <UniqueIdentifier>{7bbd0a41-5364-4aac-ac1c-484103e86d7b}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\TestBoost.h">
+      <Filter>TestBoost</Filter>
+    </ClInclude>
+    <ClInclude Include="TestZip\TestZip.h">
+      <Filter>TestZip</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\Log\TestLog.h">
+      <Filter>TestBoost\Log</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\SmartPtr\TestSmartPtr.h">
+      <Filter>TestBoost\SmartPtr</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\Function\TestFunction.h">
+      <Filter>TestBoost\Function</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\FileSystem\TestFileSystem.h">
+      <Filter>TestBoost\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="TestBoost\Format\TestFormat.h">
+      <Filter>TestBoost\Format</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSTL\TestSTL.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSTL\regex\TestRegEx.h">
+      <Filter>TestSTL\regex</Filter>
+    </ClInclude>
+    <ClInclude Include="TestSTL\string\TestString.h">
+      <Filter>TestSTL\string</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TestLib.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="TestBoost\TestBoost.cpp">
+      <Filter>TestBoost</Filter>
+    </ClCompile>
+    <ClCompile Include="TestZip\TestZip.cpp">
+      <Filter>TestZip</Filter>
+    </ClCompile>
+    <ClCompile Include="TestSTL\TestSTL.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
