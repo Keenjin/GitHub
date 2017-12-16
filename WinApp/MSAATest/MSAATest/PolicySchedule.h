@@ -2,6 +2,7 @@
 #include "PolicyBase.h"
 #include "AutoCriticalSection.h"
 #include <vector>
+#include "PolicyConfig.h"
 
 class CPolicySchedule
 {
@@ -50,5 +51,7 @@ public:
 private:
 	ATL::CComAutoCriticalSection m_csForPolicyInst;
 	std::vector<CComPtr<CPolicyBase>>	m_vecPolicyInst;
+
+	CPolicyConfig	m_PolicyCfg;
 };
 

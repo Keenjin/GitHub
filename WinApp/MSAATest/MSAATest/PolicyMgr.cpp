@@ -114,7 +114,7 @@ HRESULT CPolicyMgr::Fire(DWORD event, HWND hwnd,
 
 void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 {
-	if (!pObj)
+	/*if (!pObj)
 	{
 		return;
 	}
@@ -132,16 +132,16 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 		HELP_API::WND_EVENT_API::CtrlObjectName(dwIdObject),
 		HELP_API::WND_EVENT_API::ChildIDName(dwIdChild),
 		dwThreadID,
-		GetCurrentThreadId());
+		GetCurrentThreadId());*/
 
-	for (;;)
+	//for (;;)
 	{
 		// 调用策略，不断执行下去，直到最后完成，跳出循环
-		CPolicyBase* pPolicyHandle = GetNextPolicy(pObj);
-		if (!pPolicyHandle)
-		{
-			break;
-		}
-		pPolicyHandle->PolicyHandler(pObj);
+		//CPolicyBase* pPolicyHandle = GetNextPolicy(pObj);
+		//if (!pPolicyHandle)
+		//{
+		//	break;
+		//}
+		//pPolicyHandle->PolicyHandler(pObj);
 	}
 }

@@ -37,6 +37,9 @@
     <Filter Include="Policy\PolicyConfig">
       <UniqueIdentifier>{fd614e6c-ef6f-49ab-b229-80934e2e542e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\rapidxml">
+      <UniqueIdentifier>{7b9d817a-b410-49ca-875c-f03d52bdf1d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -110,6 +113,21 @@
     </ClInclude>
     <ClInclude Include="PolicyConfig.h">
       <Filter>Policy\PolicyConfig</Filter>
+    </ClInclude>
+    <ClInclude Include="rapid\rapidxml.hpp">
+      <Filter>Common\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="rapid\rapidxml_iterators.hpp">
+      <Filter>Common\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="rapid\rapidxml_print.hpp">
+      <Filter>Common\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="rapid\rapidxml_utils.hpp">
+      <Filter>Common\rapidxml</Filter>
+    </ClInclude>
+    <ClInclude Include="XmlParser.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

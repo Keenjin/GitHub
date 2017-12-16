@@ -11,6 +11,7 @@ CPolicySchedule::~CPolicySchedule()
 
 HRESULT CPolicySchedule::Init()
 {
+	m_PolicyCfg.Load();
 	return S_OK;
 }
 
@@ -24,6 +25,7 @@ void CPolicySchedule::UnInit()
 	}
 
 	m_vecPolicyInst.clear();
+	m_PolicyCfg.UnLoad();
 }
 
 CPolicyBase* CPolicySchedule::GetPolicy(UINT uIndex)

@@ -1,4 +1,5 @@
 #pragma once
+#include "AutoCriticalSection.h"
 
 class CCpuSmooth
 {
@@ -68,6 +69,7 @@ public:
 	// 总CPU百分比超过dwPercent，返回TRUE
 	BOOL IsCpuHigh(DWORD dwPercent)
 	{
+		CAutoCriticalSection lock(m_cs);
 		BOOL bHigh = FALSE;
 
 		do
@@ -103,16 +105,17 @@ public:
 	// hProcess为NULL，返回当前进程
 	BOOL IsProcCpuHigh(HANDLE hProcess, DWORD dwPercent)
 	{
+		CAutoCriticalSection lock(m_cs);
 		BOOL bHigh = FALSE;
 
 		do
 		{
 			if (NULL == hProcess)
 			{
-				hProcess = GetCurrentProcess();
+				hProcess = (HANDLE)GetModuleHandle(NULL);
 			}
 
-			if (NULL == hProcess)
+			if (NULL == hProcess || INVALID_HANDLE_VALUE == hProcess)
 			{
 				break;
 			}
@@ -148,6 +151,7 @@ public:
 	}
 
 private:
+	ATL::CComAutoCriticalSection m_cs;
 	CPU_TIME	m_PreCpuTime;
 
 	// 进程的

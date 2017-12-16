@@ -18,6 +18,26 @@ public:
 	{}
 	~CTaskPool() {}
 
+	virtual void ThreadProc(unsigned int nIndex)
+	{
+		while (!IsQuit())
+		{
+			WaitEvent(nIndex, INFINITE);
+
+			if (IsQuit()){
+				break;
+			}
+
+			if (!m_pContainer){
+				break;
+			}
+
+			if (m_pObj && m_fProc){
+				(m_pObj->*m_fProc)(m_pContainer->PopHead());
+			}
+		}
+	}
+
 	HRESULT Create(T* pobj, fPolicyProc fn, TContainer* pContainer)
 	{
 		HRESULT hr = E_FAIL;
@@ -69,29 +89,6 @@ public:
 
 		m_pContainer->AddTail(obj);
 		SetEventAll();
-	}
-
-	virtual void ThreadProc(unsigned int nIndex)
-	{
-		while (!IsQuit())
-		{
-			WaitEvent(nIndex, INFINITE);
-
-			if (IsQuit())
-			{
-				break;
-			}
-			
-			if (!m_pContainer)
-			{
-				break;
-			}
-
-			if (m_pObj && m_fProc)
-			{
-				(m_pObj->*m_fProc)(m_pContainer->PopHead());
-			}
-		}
 	}
 
 private:
