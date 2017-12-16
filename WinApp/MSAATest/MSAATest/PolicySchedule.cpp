@@ -38,13 +38,13 @@ CPolicyBase* CPolicySchedule::GetFirstPolicy(UINT uIndex, CComPtr<IPolicyObj> pO
 	do
 	{
 		m_uPolicyGroupIndex = uIndex;
-		CAtlString strGuid = GetPolicyItemGuid(m_uPolicyGroupIndex, 0);
+		m_uPolicyItemIndex = 0;
+		CAtlString strGuid = GetPolicyItemGuid(m_uPolicyGroupIndex, m_uPolicyItemIndex);
 		if (strGuid.IsEmpty())
 		{
 			break;
 		}
 		pPolicy = GetPolicy(strGuid);
-		m_uPolicyItemIndex = 0;
 
 	} while (FALSE);
 	return pPolicy;
@@ -58,7 +58,6 @@ CPolicyBase* CPolicySchedule::GetNextPolicy(CComPtr<IPolicyObj> pObj)
 	CComPtr<CPolicyBase> pPolicy;
 	do
 	{
-
 		CAtlString strGuid = GetPolicyItemGuid(m_uPolicyGroupIndex, m_uPolicyItemIndex);
 		if (strGuid.IsEmpty())
 		{
