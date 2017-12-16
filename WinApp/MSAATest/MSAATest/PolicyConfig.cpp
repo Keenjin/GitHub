@@ -53,27 +53,24 @@ BOOL CPolicyConfig::Load()
 		{
 			break;
 		}
-		m_xmlParser.IntoElem();
 
+		m_xmlParser.IntoElem();
 		while (m_xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP))
 		{
-			m_xmlParser.IntoElem();
-
 			CAtlString strValue = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ATTR_NAME);
 			LOG_PRINT(L"%s, PolicyGroup name(%s)", __FUNCTIONW__, strValue);
+
+			m_xmlParser.IntoElem();
 			while (m_xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP_ITEM))
 			{
-				m_xmlParser.IntoElem();
-
 				CAtlString strName = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME);
 				CAtlString strGuid = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME);
-				LOG_PRINT(L"%s, PolicyItem name(%s) guid(%s)", __FUNCTIONW__, strValue, strGuid);
-
-				m_xmlParser.OutOfElem();
+				LOG_PRINT(L"%s, PolicyItem name(%s) guid(%s)", __FUNCTIONW__, strName, strGuid);
 			}
-
 			m_xmlParser.OutOfElem();
 		}
+		m_xmlParser.OutOfElem();
+		m_xmlParser.OutOfElem();
 		
 		bRet = TRUE;
 

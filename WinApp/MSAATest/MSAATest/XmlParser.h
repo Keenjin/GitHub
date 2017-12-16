@@ -3,7 +3,6 @@
 #include "Log.h"
 #include <atlfile.h>
 #include <typeinfo.h>
-#include <iostream>
 #include <sstream>
 
 template<typename T = char>
@@ -32,6 +31,7 @@ private:
 private:
 	rapidxml::xml_document<T>	m_xmlDoc;
 	ATL::CAtlString	m_strFile;
+	CAutoVectorPtr<T> m_pXmlData;
 
 	rapidxml::xml_node<T>*	m_pNodeFirst;
 	rapidxml::xml_node<T>*	m_pNodeNext;
@@ -70,7 +70,8 @@ inline BOOL CXmlParser<char>::Load(LPCWSTR lpstrFilePath)
 			break;
 		}
 
-		if (!LoadFromData(pData.m_p))
+		m_pXmlData.Attach(pData.Detach());
+		if (!LoadFromData(m_pXmlData.m_p))
 		{
 			break;
 		}
@@ -101,15 +102,14 @@ inline BOOL CXmlParser<wchar_t>::Load(LPCWSTR lpstrFilePath)
 			break;
 		}
 
-		CAutoVectorPtr<wchar_t> pwData;
-		pwData.Allocate(_msize(pData.m_p) / sizeof(char));
-		pwData.Attach(CA2W(pData.Detach(), CP_UTF8));
-		if (!pwData.m_p)
+		m_pXmlData.Allocate(_msize(pData.m_p) / sizeof(char));
+		m_pXmlData.Attach(CA2W(pData.Detach(), CP_UTF8));
+		if (!m_pXmlData.m_p)
 		{
 			break;
 		}
 
-		bRet = LoadFromData(pwData.m_p);
+		bRet = LoadFromData(m_pXmlData.m_p);
 
 	} while (FALSE);
 
@@ -121,6 +121,7 @@ inline void CXmlParser<T>::UnLoad()
 {
 	m_pNodeFirst = NULL;
 	m_pNodeNext = NULL;
+	m_pXmlData.Free();
 	m_xmlDoc.clear();
 }
 
@@ -152,7 +153,7 @@ inline BOOL CXmlParser<T>::LoadFile(LPCWSTR lpstrFilePath, CAutoVectorPtr<char>&
 			nSize = (ULONG)nFileSize;
 		}
 
-		if (!pFileData.Allocate(nSize))
+		if (!pFileData.Allocate(nSize + 1))
 		{
 			break;
 		}
@@ -163,6 +164,7 @@ inline BOOL CXmlParser<T>::LoadFile(LPCWSTR lpstrFilePath, CAutoVectorPtr<char>&
 		{
 			break;
 		}
+		pFileData.m_p[nSize] = '\0';
 		file.Close();
 
 		bRet = TRUE;
@@ -253,6 +255,7 @@ inline BOOL CXmlParser<T>::FindElem(const T* ElemName)
 		if (pNode)
 		{
 			m_pNodeFirst = pNode;
+			m_pNodeNext = pNode;
 		}
 	}
 	else
@@ -293,8 +296,8 @@ inline void CXmlParser<T>::OutOfElem()
 {
 	if (m_pNodeFirst)
 	{
-		m_pNodeFirst = m_pNodeFirst->parent();
 		m_pNodeNext = m_pNodeFirst;
+		m_pNodeFirst = m_pNodeFirst->parent();
 	}
 }
 
