@@ -90,6 +90,7 @@
     <ClInclude Include="MSAATest.h" />
     <ClInclude Include="PolicyBase.h" />
     <ClInclude Include="PolicyConfig.h" />
+    <ClInclude Include="PolicyFactory.h" />
     <ClInclude Include="PolicyMgr.h" />
     <ClInclude Include="PolicyObj.h" />
     <ClInclude Include="PolicyObjImpl.h" />

@@ -2,6 +2,8 @@
 #include "PolicySchedule.h"
 
 CPolicySchedule::CPolicySchedule()
+	: m_uPolicyItemIndex(0)
+	, m_uPolicyGroupIndex(0)
 {
 }
 
@@ -11,29 +13,59 @@ CPolicySchedule::~CPolicySchedule()
 
 HRESULT CPolicySchedule::Init()
 {
-	m_PolicyCfg.Load();
-	return S_OK;
+	HRESULT hr = E_FAIL;
+	do
+	{
+		if (!Load())
+		{
+			break;
+		}
+
+		hr = S_OK;
+
+	} while (FALSE);
+	return hr;
 }
 
 void CPolicySchedule::UnInit()
 {
-	CAutoCriticalSection lock(m_csForPolicyInst);
-	for (std::vector<CComPtr<CPolicyBase>>::iterator itor = m_vecPolicyInst.begin();
-		 itor != m_vecPolicyInst.end(); itor++)
-	{
-		(*itor)->UnInit();
-	}
-
-	m_vecPolicyInst.clear();
-	m_PolicyCfg.UnLoad();
+	UnLoad();
 }
 
-CPolicyBase* CPolicySchedule::GetPolicy(UINT uIndex)
+CPolicyBase* CPolicySchedule::GetFirstPolicy(UINT uIndex, CComPtr<IPolicyObj> pObj)
 {
-	CAutoCriticalSection lock(m_csForPolicyInst);
-	if (uIndex < m_vecPolicyInst.size())
+	CComPtr<CPolicyBase> pPolicy;
+	do
 	{
-		return m_vecPolicyInst[uIndex];
-	}
-	return NULL;
+		m_uPolicyGroupIndex = uIndex;
+		CAtlString strGuid = GetPolicyItemGuid(m_uPolicyGroupIndex, 0);
+		if (strGuid.IsEmpty())
+		{
+			break;
+		}
+		pPolicy = GetPolicy(strGuid);
+		m_uPolicyItemIndex = 0;
+
+	} while (FALSE);
+	return pPolicy;
+}
+
+CPolicyBase* CPolicySchedule::GetNextPolicy(CComPtr<IPolicyObj> pObj)
+{
+	// 如果pObj里面，有改变顺序的值，则以pObj为准；如果没有，则以默认顺序为准
+	m_uPolicyItemIndex++;
+
+	CComPtr<CPolicyBase> pPolicy;
+	do
+	{
+
+		CAtlString strGuid = GetPolicyItemGuid(m_uPolicyGroupIndex, m_uPolicyItemIndex);
+		if (strGuid.IsEmpty())
+		{
+			break;
+		}
+		pPolicy = GetPolicy(strGuid);
+
+	} while (FALSE);
+	return pPolicy;
 }

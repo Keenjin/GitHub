@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "PolicyConfig.h"
 #include <atlpath.h>
+#include "XmlParser.h"
 
 // XML≈‰÷√Ω·µ„
 #define POLICY_CONFIG_ROOT						"Config"
@@ -14,6 +15,7 @@
 #define POLICY_CONFIG_POLICY_GROUP_ITEMATTR_GUID	"guid"
 
 CPolicyConfig::CPolicyConfig()
+	: m_dwVersion(0)
 {
 }
 
@@ -34,42 +36,54 @@ BOOL CPolicyConfig::Load()
 		}
 		LOG_PRINT(L"%s, config file(%s)", __FUNCTIONW__, strFilePath);
 
-		if (!m_xmlParser.Load(strFilePath))
+		CXmlParser<> xmlParser;
+		if (!xmlParser.Load(strFilePath))
 		{
 			break;
 		}
 
-		if (!m_xmlParser.FindElem(POLICY_CONFIG_ROOT))
+		if (!xmlParser.FindElem(POLICY_CONFIG_ROOT))
 		{
 			break;
 		}
 
-		m_dwVersion = m_xmlParser.GetAttrib<DWORD>(POLICY_CONFIG_ROOT_VER);
+		m_dwVersion = xmlParser.GetAttrib<DWORD>(POLICY_CONFIG_ROOT_VER);
 		LOG_PRINT(L"%s, config version(%d)", __FUNCTIONW__, m_dwVersion);
 
-		m_xmlParser.IntoElem();
+		xmlParser.IntoElem();
 
-		if (!m_xmlParser.FindElem(POLICY_CONFIG_POLICY))
+		if (!xmlParser.FindElem(POLICY_CONFIG_POLICY))
 		{
 			break;
 		}
 
-		m_xmlParser.IntoElem();
-		while (m_xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP))
+		CAutoCriticalSection lock(m_csForPolicyCfg);
+		xmlParser.IntoElem();
+		while (xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP))
 		{
-			CAtlString strValue = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ATTR_NAME);
-			LOG_PRINT(L"%s, PolicyGroup name(%s)", __FUNCTIONW__, strValue);
+			POLICY_GROUP policyGroup;
 
-			m_xmlParser.IntoElem();
-			while (m_xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP_ITEM))
+			policyGroup.strName = xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ATTR_NAME);
+			LOG_PRINT(L"%s, PolicyGroup name(%s)", __FUNCTIONW__, policyGroup.strName);
+
+			xmlParser.IntoElem();
+			while (xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP_ITEM))
 			{
-				CAtlString strName = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME);
-				CAtlString strGuid = m_xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME);
-				LOG_PRINT(L"%s, PolicyItem name(%s) guid(%s)", __FUNCTIONW__, strName, strGuid);
+				POLICY_ITEM policyItem;
+
+				policyItem.strName = xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME);
+				policyItem.strGuid = xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ITEMATTR_GUID);
+				LOG_PRINT(L"%s, PolicyItem name(%s) guid(%s)", __FUNCTIONW__, policyItem.strName, policyItem.strGuid);
+
+				Add(policyItem.strGuid);
+
+				policyGroup.vecPolicyItems.push_back(policyItem);
 			}
-			m_xmlParser.OutOfElem();
+			xmlParser.OutOfElem();
+
+			m_vecPolicyCfg.push_back(policyGroup);
 		}
-		m_xmlParser.OutOfElem();
+		xmlParser.OutOfElem();
 		
 		bRet = TRUE;
 
@@ -85,5 +99,29 @@ BOOL CPolicyConfig::Load()
 
 void CPolicyConfig::UnLoad()
 {
-	m_xmlParser.UnLoad();
+	RemoveAll();
+
+	{
+		CAutoCriticalSection lock(m_csForPolicyCfg);
+		m_vecPolicyCfg.clear();
+	}
+}
+
+UINT CPolicyConfig::GetPolicyGroupCnt()
+{
+	CAutoCriticalSection lock(m_csForPolicyCfg);
+	return m_vecPolicyCfg.size();
+}
+
+CAtlString CPolicyConfig::GetPolicyItemGuid(UINT uGroupIndex, UINT uItemIndex)
+{
+	CAtlString strGuid;
+
+	CAutoCriticalSection lock(m_csForPolicyCfg);
+	if (uGroupIndex < m_vecPolicyCfg.size() && m_vecPolicyCfg[uGroupIndex].vecPolicyItems.size() > 0)
+	{
+		strGuid = m_vecPolicyCfg[uGroupIndex].vecPolicyItems[uItemIndex].strGuid;
+	}
+
+	return strGuid;
 }

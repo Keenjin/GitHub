@@ -129,6 +129,9 @@
     <ClInclude Include="XmlParser.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="PolicyFactory.h">
+      <Filter>Policy\PolicyConfig</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

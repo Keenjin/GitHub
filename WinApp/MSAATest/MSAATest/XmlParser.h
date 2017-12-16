@@ -313,15 +313,13 @@ template<>
 template<typename TRet>
 inline TRet CXmlParser<char>::GetAttrib(const char* AttrKey)
 {
-	TRet ret;
+	TRet ret = TRet();
 
-	try
+	if (m_pNodeNext && m_pNodeNext->first_attribute(AttrKey) && m_pNodeNext->first_attribute(AttrKey)->value())
 	{
 		std::istringstream iss(m_pNodeNext->first_attribute(AttrKey)->value());
 		iss >> ret;
 	}
-	catch (...)
-	{ }
 
 	return ret;
 }
@@ -330,15 +328,13 @@ template<>
 template<typename TRet>
 inline TRet CXmlParser<wchar_t>::GetAttrib(const wchar_t* AttrKey)
 {
-	TRet ret;
+	TRet ret = TRet();
 
-	try
+	if (m_pNodeNext && m_pNodeNext->first_attribute(AttrKey) && m_pNodeNext->first_attribute(AttrKey)->value())
 	{
-		std::wistringstream iss(m_pNodeNext->first_attribute(AttrKey).value());
+		std::wistringstream iss(m_pNodeNext->first_attribute(AttrKey)->value());
 		iss >> ret;
 	}
-	catch (...)
-	{ }
 
 	return ret;
 }
@@ -349,12 +345,10 @@ inline CAtlString CXmlParser<char>::GetAttrib(const char* AttrKey)
 {
 	CAtlString ret;
 
-	try
+	if (m_pNodeNext && m_pNodeNext->first_attribute(AttrKey))
 	{
 		ret = CA2W(m_pNodeNext->first_attribute(AttrKey)->value(), CP_UTF8);
 	}
-	catch (...)
-	{ }
 
 	return ret;
 }
@@ -365,12 +359,10 @@ inline CAtlString CXmlParser<wchar_t>::GetAttrib(const wchar_t* AttrKey)
 {
 	CAtlString ret;
 
-	try
+	if (m_pNodeNext && m_pNodeNext->first_attribute(AttrKey))
 	{
 		ret = m_pNodeNext->first_attribute(AttrKey)->value();
 	}
-	catch (...)
-	{ }
 
 	return ret;
 }
@@ -380,7 +372,7 @@ inline LPCWSTR CXmlParser<T>::GetValue()
 {
 	ATL::CAtlString strValue;
 
-	try
+	if (m_pNodeNext)
 	{
 		if (typeid(m_pNodeNext->value()) == typeid(char*))
 		{
@@ -391,8 +383,6 @@ inline LPCWSTR CXmlParser<T>::GetValue()
 			strValue = m_pNodeNext->value();
 		}
 	}
-	catch (...)
-	{ }
 	
 	return strValue;
 }
