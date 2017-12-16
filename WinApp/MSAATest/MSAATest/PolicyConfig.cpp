@@ -70,7 +70,6 @@ BOOL CPolicyConfig::Load()
 			m_xmlParser.OutOfElem();
 		}
 		m_xmlParser.OutOfElem();
-		m_xmlParser.OutOfElem();
 		
 		bRet = TRUE;
 

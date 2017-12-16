@@ -20,7 +20,7 @@ public:
 	void OutOfElem();
 	template<typename TRet>
 	TRet GetAttrib(const T* AttrKey);
-	LPCWSTR GetValue(const T* ValueKey);
+	LPCWSTR GetValue();
 	LPCWSTR GetFilePath();
 
 private:
@@ -275,6 +275,14 @@ inline BOOL CXmlParser<T>::FindElem(const T* ElemName)
 			{
 				m_pNodeNext = pNode;
 			}
+			else
+			{
+				pNode = m_pNodeNext->first_node(ElemName);
+				if (pNode)
+				{
+					m_pNodeNext = pNode;
+				}
+			}
 		}
 	}
 	
@@ -368,7 +376,7 @@ inline CAtlString CXmlParser<wchar_t>::GetAttrib(const wchar_t* AttrKey)
 }
 
 template<typename T>
-inline LPCWSTR CXmlParser<T>::GetValue(const T* ValueKey)
+inline LPCWSTR CXmlParser<T>::GetValue()
 {
 	ATL::CAtlString strValue;
 
@@ -386,7 +394,7 @@ inline LPCWSTR CXmlParser<T>::GetValue(const T* ValueKey)
 	catch (...)
 	{ }
 	
-	return strValue
+	return strValue;
 }
 
 template<typename T>

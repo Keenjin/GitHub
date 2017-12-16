@@ -24,4 +24,7 @@
       <PolicyItem name="数据上报策略" guid="{6FD70639-370F-4E21-80F9-5B780969AFF6}" />
     </PolicyGroup>
   </Policy>
+  <Test>
+    测试一下是否正常
+  </Test>
 </Config>
