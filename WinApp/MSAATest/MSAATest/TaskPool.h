@@ -22,17 +22,23 @@ public:
 	{
 		while (!IsQuit())
 		{
-			WaitEvent(nIndex, INFINITE);
-
-			if (IsQuit()){
+			if (!m_pContainer) 
+			{
 				break;
 			}
 
-			if (!m_pContainer){
+			if (m_pContainer->GetCount() == 0)
+			{
+				WaitEvent(nIndex, INFINITE);
+			}
+
+			if (IsQuit()) 
+			{
 				break;
 			}
 
-			if (m_pObj && m_fProc){
+			// 只要线程池不为空，就要一直取任务，执行任务，直到线程池里任务清空为止
+			if (m_pObj && m_fProc) {
 				(m_pObj->*m_fProc)(m_pContainer->PopHead());
 			}
 		}

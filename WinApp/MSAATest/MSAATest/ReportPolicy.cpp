@@ -27,13 +27,13 @@ HRESULT STDMETHODCALLTYPE CReportPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
 	HWND hWnd = (HWND)GetValue<ULONGLONG>(pPolicyObj, POLICY_INDEX_HWND);
 	DWORD dwThreadID = GetValue<DWORD>(pPolicyObj, POLICY_INDEX_TID);
 
-	CAtlString strWndText;
+	/*CAtlString strWndText;
 	GetWindowText(GetTopParentWnd(hWnd), strWndText.GetBufferSetLength(1024), 1023);
 	strWndText.ReleaseBuffer();
 	if (strWndText.MakeLower().Find(L"debugview") != -1)
 	{
 		return E_FAIL;
-	}
+	}*/
 
 	//GetProcessIDFromName(L"dbgview.exe");
 

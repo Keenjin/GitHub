@@ -21,7 +21,7 @@
       <PolicyItem name="白名单过滤策略" guid="{5A6DCD6B-B1B3-4999-8D45-E58F66033A0B}" />
       <PolicyItem name="运营规则策略" guid="{BEB30D44-E029-484B-9683-E4B92AE0C594}" />
     </PolicyGroup>
-    <PolicyGroup name="拦截上报分组">
+    <PolicyGroup name="数据上报分组">
       <PolicyItem name="数据上报策略" guid="{6FD70639-370F-4E21-80F9-5B780969AFF6}" />
     </PolicyGroup>
   </Policy>
