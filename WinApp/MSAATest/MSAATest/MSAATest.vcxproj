@@ -82,6 +82,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="AutoCriticalSection.h" />
+    <ClInclude Include="BlockWndPolicy.h" />
     <ClInclude Include="CpuSmooth.h" />
     <ClInclude Include="Event.h" />
     <ClInclude Include="HelpApi.h" />
@@ -100,6 +101,7 @@
     <ClInclude Include="rapid\rapidxml_iterators.hpp" />
     <ClInclude Include="rapid\rapidxml_print.hpp" />
     <ClInclude Include="rapid\rapidxml_utils.hpp" />
+    <ClInclude Include="ReportPolicy.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="TaskContainerImpl.h" />
     <ClInclude Include="TaskPool.h" />
@@ -112,6 +114,7 @@
     <ClInclude Include="XmlParser.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="BlockWndPolicy.cpp" />
     <ClCompile Include="HelpApi_ProcThread.cpp" />
     <ClCompile Include="HelpApi_WndEvent.cpp" />
     <ClCompile Include="MSAATest.cpp" />
@@ -119,6 +122,7 @@
     <ClCompile Include="PolicyMgr.cpp" />
     <ClCompile Include="PolicySchedule.cpp" />
     <ClCompile Include="PreFilterPolicy.cpp" />
+    <ClCompile Include="ReportPolicy.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>

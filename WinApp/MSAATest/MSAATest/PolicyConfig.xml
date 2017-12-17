@@ -1,8 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Config version="1">
   <Policy>
-    <PolicyGroup name="前置过滤分组">
+    <PolicyGroup name="前置拦截分组">
       <PolicyItem name="前置过滤策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
+      <PolicyItem name="拦截策略" guid="{782D2174-75AD-4B91-92C5-8A0775E15925}" />
     </PolicyGroup>
     <PolicyGroup name="广告拦截分组">
       <PolicyItem name="白名单过滤策略" guid="{AE2C247B-34FC-4576-A5A1-FA31EDA5C828}" />
@@ -10,6 +11,7 @@
       <PolicyItem name="本地规则策略" guid="{12106880-3EB4-41AF-B23F-7C02DC33C650}" />
       <PolicyItem name="云查协议策略" guid="{7BAB9B4A-A4E7-4A77-A7EF-8CD2DF595EC7}" />
       <PolicyItem name="浮条规则策略" guid="{68AB96E0-9701-4E15-A83C-0999F82FE2AF}" />
+      <PolicyItem name="拦截策略" guid="{782D2174-75AD-4B91-92C5-8A0775E15925}" />
     </PolicyGroup>
     <PolicyGroup name="宏提醒分组">
       <PolicyItem name="白名单过滤策略" guid="{871A9E0A-AEB7-4BD1-8E68-CBD30ABDC938}" />
@@ -20,7 +22,6 @@
       <PolicyItem name="运营规则策略" guid="{BEB30D44-E029-484B-9683-E4B92AE0C594}" />
     </PolicyGroup>
     <PolicyGroup name="拦截上报分组">
-      <PolicyItem name="拦截策略" guid="{782D2174-75AD-4B91-92C5-8A0775E15925}" />
       <PolicyItem name="数据上报策略" guid="{6FD70639-370F-4E21-80F9-5B780969AFF6}" />
     </PolicyGroup>
   </Policy>

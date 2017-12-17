@@ -34,6 +34,10 @@ void CPolicySchedule::UnInit()
 
 CPolicyBase* CPolicySchedule::GetFirstPolicy(UINT uIndex, CComPtr<IPolicyObj> pObj)
 {
+	// pObj可以改变下一个执行者
+	// Todo
+
+
 	CComPtr<CPolicyBase> pPolicy;
 	do
 	{
@@ -52,6 +56,10 @@ CPolicyBase* CPolicySchedule::GetFirstPolicy(UINT uIndex, CComPtr<IPolicyObj> pO
 
 CPolicyBase* CPolicySchedule::GetNextPolicy(CComPtr<IPolicyObj> pObj)
 {
+	// pObj可以改变下一个执行者
+	// Todo
+
+
 	// 如果pObj里面，有改变顺序的值，则以pObj为准；如果没有，则以默认顺序为准
 	m_uPolicyItemIndex++;
 

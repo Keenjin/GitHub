@@ -132,6 +132,12 @@
     <ClInclude Include="PolicyFactory.h">
       <Filter>Policy\PolicyConfig</Filter>
     </ClInclude>
+    <ClInclude Include="BlockWndPolicy.h">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
+    <ClInclude Include="ReportPolicy.h">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -169,6 +175,12 @@
     </ClCompile>
     <ClCompile Include="PolicyConfig.cpp">
       <Filter>Policy\PolicyConfig</Filter>
+    </ClCompile>
+    <ClCompile Include="BlockWndPolicy.cpp">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClCompile>
+    <ClCompile Include="ReportPolicy.cpp">
+      <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

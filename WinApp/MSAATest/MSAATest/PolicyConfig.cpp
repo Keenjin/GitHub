@@ -118,7 +118,7 @@ CAtlString CPolicyConfig::GetPolicyItemGuid(UINT uGroupIndex, UINT uItemIndex)
 	CAtlString strGuid;
 
 	CAutoCriticalSection lock(m_csForPolicyCfg);
-	if (uGroupIndex < m_vecPolicyCfg.size() && m_vecPolicyCfg[uGroupIndex].vecPolicyItems.size() > 0)
+	if (uGroupIndex < m_vecPolicyCfg.size() && m_vecPolicyCfg[uGroupIndex].vecPolicyItems.size() > uItemIndex)
 	{
 		strGuid = m_vecPolicyCfg[uGroupIndex].vecPolicyItems[uItemIndex].strGuid;
 	}
