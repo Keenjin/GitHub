@@ -59,7 +59,7 @@ BOOL CPolicyMgr::IsEventOfWindow(DWORD event, HWND hwnd,
 	LONG idObject, LONG idChild,
 	DWORD dwEventThread)
 {
-	if (idObject != OBJID_WINDOW || idChild != CHILDID_SELF || NULL == hwnd)
+	if (idObject != OBJID_WINDOW || idChild != CHILDID_SELF || NULL == hwnd || !::IsWindow(hwnd))
 	{
 		return FALSE;
 	}
@@ -98,11 +98,11 @@ HRESULT CPolicyMgr::Fire(DWORD event, HWND hwnd,
 		return E_FAIL;
 	}
 
-	pObj->SetParam(POLICY_INDEX_EVENT, CComVariant((unsigned int)event));
-	pObj->SetParam(POLICY_INDEX_HWND, CComVariant((ULONGLONG)hwnd));
-	pObj->SetParam(POLICY_INDEX_IDOBJECT, CComVariant(idObject));
-	pObj->SetParam(POLICY_INDEX_IDCHILD, CComVariant(idChild));
-	pObj->SetParam(POLICY_INDEX_TID, CComVariant((unsigned int)dwEventThread));
+	SetValue(pObj, POLICY_INDEX_EVENT, event);
+	SetValue(pObj, POLICY_INDEX_HWND, (ULONGLONG)hwnd);
+	SetValue(pObj, POLICY_INDEX_IDOBJECT, idObject);
+	SetValue(pObj, POLICY_INDEX_IDCHILD, idChild);
+	SetValue(pObj, POLICY_INDEX_TID, dwEventThread);
 
 	// 往任务队列里面塞任务
 	m_TaskPool.AddTask(pObj);
@@ -120,8 +120,8 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 	}
 
 	DWORD dwEvent = GetValue<DWORD>(pObj, POLICY_INDEX_EVENT);
-	DWORD dwIdObject = GetValue<DWORD>(pObj, POLICY_INDEX_IDOBJECT);
-	DWORD dwIdChild = GetValue<DWORD>(pObj, POLICY_INDEX_IDCHILD);
+	DWORD dwIdObject = GetValue<LONG>(pObj, POLICY_INDEX_IDOBJECT);
+	DWORD dwIdChild = GetValue<LONG>(pObj, POLICY_INDEX_IDCHILD);
 	HWND hWnd = (HWND)GetValue<ULONGLONG>(pObj, POLICY_INDEX_HWND);
 	DWORD dwThreadID = GetValue<DWORD>(pObj, POLICY_INDEX_TID);
 

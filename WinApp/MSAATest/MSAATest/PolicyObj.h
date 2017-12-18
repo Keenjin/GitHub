@@ -11,6 +11,11 @@ enum EPolicyObjIndex
 	POLICY_INDEX_IDOBJECT,
 	POLICY_INDEX_IDCHILD,
 	POLICY_INDEX_TID,
+	POLICY_INDEX_TOPHWND,
+	POLICY_INDEX_X,
+	POLICY_INDEX_Y,
+	POLICY_INDEX_WIDTH,
+	POLICY_INDEX_HEIGHT,
 	POLICY_INDEX_PID,
 
 
@@ -34,6 +39,9 @@ public:
 
 template<typename T>
 inline T GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex);
+
+template<typename T>
+inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value);
 
 template<>
 inline int GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
@@ -60,6 +68,18 @@ inline DWORD GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 }
 
 template<>
+inline LONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+{
+	LONG lValue = 0;
+	if (pObj)	{
+		CComVariant varVal;
+		pObj->GetParam(uIndex, &varVal);
+		lValue = varVal.lVal;
+	}
+	return lValue;
+}
+
+template<>
 inline ULONGLONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 {
 	ULONGLONG ullValue = 0;
@@ -81,4 +101,62 @@ inline CAtlString GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 		strValue = varVal.bstrVal;
 	}
 	return strValue;
+}
+
+
+template<typename T>
+inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value)
+{
+	BOOL bRet = FALSE;
+
+	do
+	{
+		if (!pObj)
+		{
+			break;
+		}
+
+		bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant(value)));
+
+	} while (FALSE);
+
+	return bRet;
+}
+
+template<>
+inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, DWORD value)
+{
+	BOOL bRet = FALSE;
+
+	do
+	{
+		if (!pObj)
+		{
+			break;
+		}
+
+		bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant((unsigned int)value)));
+
+	} while (FALSE);
+
+	return bRet;
+}
+
+template<>
+inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, CAtlString value)
+{
+	BOOL bRet = FALSE;
+
+	do
+	{
+		if (!pObj)
+		{
+			break;
+		}
+
+		bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant(value.GetString())));
+
+	} while (FALSE);
+
+	return bRet;
 }
