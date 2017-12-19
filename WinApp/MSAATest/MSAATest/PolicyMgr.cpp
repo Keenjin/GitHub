@@ -137,11 +137,6 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 	for (size_t i = 0; i < m_PolicySched.GetPolicyGroupCnt(); i++)
 	{
 		// 按照分组，依次执行下去
-		CComPtr<CPolicyBase> pPolicy = m_PolicySched.GetFirstPolicy(i, pObj);
-		while (pPolicy)
-		{
-			pPolicy->PolicyHandler(pObj);
-			pPolicy = m_PolicySched.GetNextPolicy(pObj);
-		}
+		m_PolicySched.GetNextPolicy(pObj);
 	}
 }

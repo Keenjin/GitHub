@@ -9,10 +9,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumThreadID", "EnumThreadI
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDriverType", "TestDriverType\TestDriverType.vcxproj", "{E53778A6-1A2F-4ECC-A19C-47F453605AB1}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DesktopWnd", "DesktopWnd\DesktopWnd.vcxproj", "{EC89192A-D338-4997-B8D9-C8D0F132164D}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "EnumDisplayMonitors", "EnumDisplayMonitors\EnumDisplayMonitors.vcxproj", "{C1708533-A60F-4BEC-A561-787C2E3823A7}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -31,14 +27,6 @@ Global
 		{E53778A6-1A2F-4ECC-A19C-47F453605AB1}.Debug|Win32.Build.0 = Debug|Win32
 		{E53778A6-1A2F-4ECC-A19C-47F453605AB1}.Release|Win32.ActiveCfg = Release|Win32
 		{E53778A6-1A2F-4ECC-A19C-47F453605AB1}.Release|Win32.Build.0 = Release|Win32
-		{EC89192A-D338-4997-B8D9-C8D0F132164D}.Debug|Win32.ActiveCfg = Debug|Win32
-		{EC89192A-D338-4997-B8D9-C8D0F132164D}.Debug|Win32.Build.0 = Debug|Win32
-		{EC89192A-D338-4997-B8D9-C8D0F132164D}.Release|Win32.ActiveCfg = Release|Win32
-		{EC89192A-D338-4997-B8D9-C8D0F132164D}.Release|Win32.Build.0 = Release|Win32
-		{C1708533-A60F-4BEC-A561-787C2E3823A7}.Debug|Win32.ActiveCfg = Debug|Win32
-		{C1708533-A60F-4BEC-A561-787C2E3823A7}.Debug|Win32.Build.0 = Debug|Win32
-		{C1708533-A60F-4BEC-A561-787C2E3823A7}.Release|Win32.ActiveCfg = Release|Win32
-		{C1708533-A60F-4BEC-A561-787C2E3823A7}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
