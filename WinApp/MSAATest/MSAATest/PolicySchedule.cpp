@@ -32,9 +32,30 @@ void CPolicySchedule::UnInit()
 
 void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, BOOL& bFinish)
 {
-	CAtlString strGuid = GetPolicyItemGuid(uIndex, 0);
-	if (!strGuid.IsEmpty())
+	if (!pObj)
 	{
-		CComPtr<CPolicyBase> pPolicy = GetPolicy(strGuid);
+		return;
 	}
+
+	// 当前走到的分组ID
+	SetValue(pObj, POLICY_INDEX_GROUP_CURRENT_GID, GetGroupID(uIndex));
+
+	for (size_t i = 0; i < GetPolicyItemCount(uIndex); i++)
+	{
+		CAtlString strGuid = GetPolicyItemGuid(uIndex, i);
+		CComPtr<CPolicyBase> pPolicy = GetPolicy(strGuid);
+		if (!pPolicy)
+		{
+			break;
+		}
+		pPolicy->PolicyHandler(pObj);
+		
+		if (GetValue<BOOL>(pObj, POLICY_INDEX_GROUP_ITEM_END))
+		{
+			break;
+		}
+	}
+
+	bFinish = GetValue<BOOL>(pObj, POLICY_INDEX_GROUP_END);
+	SetValue(pObj, POLICY_INDEX_GROUP_ITEM_END, FALSE);		// 清除标记位
 }

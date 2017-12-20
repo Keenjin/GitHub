@@ -85,6 +85,7 @@
     <ClInclude Include="BlockWndPolicy.h" />
     <ClInclude Include="CpuSmooth.h" />
     <ClInclude Include="Event.h" />
+    <ClInclude Include="EventFilterPolicy.h" />
     <ClInclude Include="HelpApi.h" />
     <ClInclude Include="IUnknownImpl.h" />
     <ClInclude Include="Log.h" />
@@ -115,6 +116,7 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="BlockWndPolicy.cpp" />
+    <ClCompile Include="EventFilterPolicy.cpp" />
     <ClCompile Include="HelpApi_ProcThread.cpp" />
     <ClCompile Include="HelpApi_WndEvent.cpp" />
     <ClCompile Include="MSAATest.cpp" />

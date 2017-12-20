@@ -116,6 +116,7 @@ private:
 		CLSIDFromString(strGuid, &guid);
 
 		hr &= TryCreate<CPreFilterPolicy>(strGuid, guid);
+		hr &= TryCreate<CEventFilterPolicy>(strGuid, guid);
 		hr &= TryCreate<CBlockWndPolicy>(strGuid, guid);
 		hr &= TryCreate<CReportPolicy>(strGuid, guid);
 

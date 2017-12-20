@@ -37,15 +37,6 @@
     <Filter Include="Common\rapidxml">
       <UniqueIdentifier>{7b9d817a-b410-49ca-875c-f03d52bdf1d7}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Policy\PolicyItem\PreFilter">
-      <UniqueIdentifier>{90aa8009-36f1-4681-888b-9de2ead5cabe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Policy\PolicyItem\BlockWnd">
-      <UniqueIdentifier>{6c9b60aa-06ab-44bc-b759-3fbc5d1e5e04}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Policy\PolicyItem\Report">
-      <UniqueIdentifier>{3f465a72-1aa4-442e-a429-3cc89142c610}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Policy\Config">
       <UniqueIdentifier>{fd614e6c-ef6f-49ab-b229-80934e2e542e}</UniqueIdentifier>
     </Filter>
@@ -139,13 +130,16 @@
       <Filter>Policy\Config</Filter>
     </ClInclude>
     <ClInclude Include="PreFilterPolicy.h">
-      <Filter>Policy\PolicyItem\PreFilter</Filter>
+      <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
     <ClInclude Include="BlockWndPolicy.h">
-      <Filter>Policy\PolicyItem\BlockWnd</Filter>
+      <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
     <ClInclude Include="ReportPolicy.h">
-      <Filter>Policy\PolicyItem\Report</Filter>
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
+    <ClInclude Include="EventFilterPolicy.h">
+      <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -183,13 +177,16 @@
       <Filter>Policy\Config</Filter>
     </ClCompile>
     <ClCompile Include="PreFilterPolicy.cpp">
-      <Filter>Policy\PolicyItem\PreFilter</Filter>
+      <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
     <ClCompile Include="BlockWndPolicy.cpp">
-      <Filter>Policy\PolicyItem\BlockWnd</Filter>
+      <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
     <ClCompile Include="ReportPolicy.cpp">
-      <Filter>Policy\PolicyItem\Report</Filter>
+      <Filter>Policy\PolicyItem</Filter>
+    </ClCompile>
+    <ClCompile Include="EventFilterPolicy.cpp">
+      <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -9,6 +9,7 @@
 
 #define POLICY_CONFIG_POLICY					"Policy"
 #define POLICY_CONFIG_POLICY_GROUP				"PolicyGroup"
+#define POLICY_CONFIG_POLICY_GROUP_ATTR_GID		"gid"
 #define POLICY_CONFIG_POLICY_GROUP_ATTR_NAME	"name"
 #define POLICY_CONFIG_POLICY_GROUP_ITEM			"PolicyItem"
 #define POLICY_CONFIG_POLICY_GROUP_ITEMATTR_NAME	"name"
@@ -63,8 +64,9 @@ BOOL CPolicyConfig::Load()
 		{
 			POLICY_GROUP policyGroup;
 
+			policyGroup.dwGID = xmlParser.GetAttrib<DWORD>(POLICY_CONFIG_POLICY_GROUP_ATTR_GID);
 			policyGroup.strName = xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ATTR_NAME);
-			LOG_PRINT(L"%s, PolicyGroup name(%s)", __FUNCTIONW__, policyGroup.strName);
+			LOG_PRINT(L"%s, PolicyGroup gid(%d),name(%s)", __FUNCTIONW__, policyGroup.dwGID, policyGroup.strName);
 
 			xmlParser.IntoElem();
 			while (xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP_ITEM))
@@ -113,6 +115,17 @@ UINT CPolicyConfig::GetPolicyGroupCnt()
 	return m_vecPolicyCfg.size();
 }
 
+UINT CPolicyConfig::GetPolicyItemCount(UINT uIndex)
+{
+	UINT uCount = 0;
+	CAutoCriticalSection lock(m_csForPolicyCfg);
+	if (uIndex < m_vecPolicyCfg.size())
+	{
+		uCount = m_vecPolicyCfg[uIndex].vecPolicyItems.size();
+	}
+	return uCount;
+}
+
 CAtlString CPolicyConfig::GetPolicyItemGuid(UINT uGroupIndex, UINT uItemIndex)
 {
 	CAtlString strGuid;
@@ -124,4 +137,15 @@ CAtlString CPolicyConfig::GetPolicyItemGuid(UINT uGroupIndex, UINT uItemIndex)
 	}
 
 	return strGuid;
+}
+
+UINT CPolicyConfig::GetGroupID(UINT uIndex)
+{
+	UINT uID = 0;
+	CAutoCriticalSection lock(m_csForPolicyCfg);
+	if (uIndex < m_vecPolicyCfg.size())
+	{
+		uID = m_vecPolicyCfg[uIndex].uGID;
+	}
+	return uID;
 }

@@ -44,15 +44,16 @@ HRESULT STDMETHODCALLTYPE CPreFilterPolicy::PolicyHandler(IPolicyObj* pPolicyObj
 	HWND hWnd = (HWND)GetValue<ULONGLONG>(pPolicyObj, POLICY_INDEX_HWND);
 	DWORD dwThreadID = GetValue<DWORD>(pPolicyObj, POLICY_INDEX_TID);
 
-	// 首先判定是否是系统基本窗口
 	BOOL bFilter = TRUE;
 	do
 	{
+		// 不可见窗口
 		if (!IsValidVisibleWnd(hWnd))
 		{
 			break;
 		}
 
+		// 系统基本窗口
 		HWND hTopWnd = HELP_API::WND_EVENT_API::GetTopParentWnd(hWnd);
 		if (IsHitSysWnd(hTopWnd))
 		{
@@ -60,6 +61,7 @@ HRESULT STDMETHODCALLTYPE CPreFilterPolicy::PolicyHandler(IPolicyObj* pPolicyObj
 		}
 		SetValue(pPolicyObj, POLICY_INDEX_TOPHWND, (ULONGLONG)hTopWnd);
 
+		// 不合规大小或者屏幕外窗口
 		CRect rcWnd;
 		GetWindowRect(hWnd, &rcWnd);
 		if (!IsValidRect(rcWnd))
@@ -74,6 +76,12 @@ HRESULT STDMETHODCALLTYPE CPreFilterPolicy::PolicyHandler(IPolicyObj* pPolicyObj
 		bFilter = FALSE;
 
 	} while (FALSE);
+
+	if (bFilter)
+	{
+		SetValue(pPolicyObj, POLICY_INDEX_GROUP_END, TRUE);
+		SetValue(pPolicyObj, POLICY_INDEX_GROUP_ITEM_END, TRUE);
+	}
 
 	return S_OK;
 }

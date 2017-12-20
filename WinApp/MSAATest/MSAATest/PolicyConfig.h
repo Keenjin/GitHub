@@ -15,6 +15,8 @@ public:
 	void UnLoad();
 
 	UINT GetPolicyGroupCnt();
+	UINT GetPolicyItemCount(UINT uIndex);
+	UINT GetGroupID(UINT uIndex);
 	CAtlString GetPolicyItemGuid(UINT uGroupIndex, UINT uItemIndex);
 
 protected:
@@ -28,8 +30,10 @@ protected:
 
 	typedef struct _POLICY_GROUP
 	{
+		UINT	uGID;
 		ATL::CAtlString strName;
 		std::vector<POLICY_ITEM> vecPolicyItems;
+		_POLICY_GROUP() : uGID(0) {}
 	}POLICY_GROUP, *PPOLICY_GROUP;
 	ATL::CComAutoCriticalSection m_csForPolicyCfg;
 	std::vector<POLICY_GROUP>	m_vecPolicyCfg;
