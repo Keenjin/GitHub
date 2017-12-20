@@ -13,11 +13,6 @@ public:
 	HRESULT Init();
 	void UnInit();
 
-	CPolicyBase* GetFirstPolicy(UINT uIndex, CComPtr<IPolicyObj> pObj);
-	CPolicyBase* GetNextPolicy(CComPtr<IPolicyObj> pObj);
-
-private:
-	UINT	m_uPolicyGroupIndex;
-	UINT	m_uPolicyItemIndex;
+	void PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, BOOL& bFinish);
 };
 
