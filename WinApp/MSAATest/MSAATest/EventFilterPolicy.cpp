@@ -33,12 +33,6 @@ HRESULT STDMETHODCALLTYPE CEventFilterPolicy::PolicyHandler(IPolicyObj* pPolicyO
 	DWORD dwEvent = GetValue<DWORD>(pPolicyObj, POLICY_INDEX_EVENT);
 	HWND hWnd = (HWND)GetValue<ULONGLONG>(pPolicyObj, POLICY_INDEX_HWND);
 
-	CRect rcWnd;
-	rcWnd.left = GetValue<LONG>(pPolicyObj, POLICY_INDEX_X);
-	rcWnd.top = GetValue<LONG>(pPolicyObj, POLICY_INDEX_Y);
-	rcWnd.right = rcWnd.left + GetValue<LONG>(pPolicyObj, POLICY_INDEX_WIDTH);
-	rcWnd.bottom = rcWnd.top + GetValue<LONG>(pPolicyObj, POLICY_INDEX_HEIGHT);
-
 	do
 	{
 		// 一些窗口的销毁动作
@@ -63,61 +57,52 @@ HRESULT STDMETHODCALLTYPE CEventFilterPolicy::PolicyHandler(IPolicyObj* pPolicyO
 		// 如果是Location的操作，则需要等待静止时
 		if (dwEvent == EVENT_OBJECT_LOCATIONCHANGE)
 		{
-			// 对于LocationChange事件，先看本地缓存有没有；如果没有，则添加到缓存，同时，将该窗口回抛；如果有，则与本地缓存的位置比对，当位置相同的时候，则说明位置确实不动了，清空队列里重复窗口，继续走下一步
+			CRect rcWnd;
+			rcWnd.left = GetValue<LONG>(pPolicyObj, POLICY_INDEX_X);
+			rcWnd.top = GetValue<LONG>(pPolicyObj, POLICY_INDEX_Y);
+			rcWnd.right = rcWnd.left + GetValue<LONG>(pPolicyObj, POLICY_INDEX_WIDTH);
+			rcWnd.bottom = rcWnd.top + GetValue<LONG>(pPolicyObj, POLICY_INDEX_HEIGHT);
+
 			CAutoCriticalSection lock(m_csForLCMap);
 			if (m_mapLocationChangeCache.find(hWnd) == m_mapLocationChangeCache.end())
 			{
 				m_mapLocationChangeCache.insert(std::pair<HWND, CRect>(hWnd, rcWnd));
+				lock.~CAutoCriticalSection();
 
-				SetValue(pPolicyObj, POLICY_INDEX_GROUP_END, TRUE);
-				SetValue(pPolicyObj, POLICY_INDEX_GROUP_ITEM_END, TRUE);
-				SetValue(pPolicyObj, POLICY_INDEX_TASK_ADD, TRUE);
-				SetValue(pPolicyObj, POLICY_INDEX_LAST_LOCATION_CHANGE, TRUE);
-				break;
+				// 最多经过5s等待，再多了，就可能是对抗引起的
+				int nTryTimes = 5;
+				CRect rcLast = rcWnd;
+				while (nTryTimes--)
+				{
+					Sleep(1000);
+
+					GetWindowRect(hWnd, &rcWnd);
+					if (rcLast == rcWnd)
+					{
+						break;
+					}
+				}
+
+				// 记录最新的窗口大小信息
+				SetValue(pPolicyObj, POLICY_INDEX_X, rcWnd.left);
+				SetValue(pPolicyObj, POLICY_INDEX_Y, rcWnd.left);
+				SetValue(pPolicyObj, POLICY_INDEX_WIDTH, rcWnd.Width());
+				SetValue(pPolicyObj, POLICY_INDEX_HEIGHT, rcWnd.Height());
+				RemoveLocationChangeCache(hWnd);
+
+				// 因为延时了，这里需要再判断一下，窗口是否依旧有效
+				if (!::IsWindow(hWnd))
+				{
+					SetValue(pPolicyObj, POLICY_INDEX_GROUP_END, TRUE);
+					SetValue(pPolicyObj, POLICY_INDEX_GROUP_ITEM_END, TRUE);
+					break;
+				}
 			}
 			else
 			{
-				CRect rcLast = m_mapLocationChangeCache[hWnd];
-				lock.~CAutoCriticalSection();		// 释放锁，防止死锁
-
-				BOOL bStop = FALSE;
-
-				// 如果是上一个LocationChange事件，说明是我们自己回抛的，就要延时一会儿查看是否有变化；如果不是上一个，说明是新产生的，直接比对位置
-				if (GetValue<BOOL>(pPolicyObj, POLICY_INDEX_LAST_LOCATION_CHANGE))
-				{
-					Sleep(10);		// 目前先只延迟10ms，看看是否变化
-
-					CRect rcNowWnd;
-					GetWindowRect(hWnd, &rcNowWnd);
-					if (rcNowWnd == rcLast)
-					{
-						// 说明已经静止了
-						bStop = TRUE;
-					}
-				}
-				else
-				{
-					if (rcWnd == rcLast)
-					{
-						// 说明已经静止了
-						bStop = TRUE;
-					}
-				}
-
-				if (!bStop)
-				{
-					// 还没有静止，则继续回抛
-					SetValue(pPolicyObj, POLICY_INDEX_GROUP_END, TRUE);
-					SetValue(pPolicyObj, POLICY_INDEX_GROUP_ITEM_END, TRUE);
-					SetValue(pPolicyObj, POLICY_INDEX_TASK_ADD, TRUE);
-					SetValue(pPolicyObj, POLICY_INDEX_LAST_LOCATION_CHANGE, TRUE);
-				}
-				else
-				{
-					// 已经静止了，则清空无用队列
-					SetValue(pPolicyObj, POLICY_INDEX_TASK_REMOVE, TRUE);
-					RemoveLocationChangeCache(hWnd);
-				}
+				SetValue(pPolicyObj, POLICY_INDEX_GROUP_END, TRUE);
+				SetValue(pPolicyObj, POLICY_INDEX_GROUP_ITEM_END, TRUE);
+				break;
 			}
 		}
 

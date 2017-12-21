@@ -13,6 +13,10 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(IPolicyObj* pPolicyObj);
 
 private:
+	BOOL GetProcCmdline(HANDLE hProcess, CAtlString& strCmdline, LPDWORD lpParentPID = NULL);
+	BOOL DeviceDosPathToNTPath(CAtlString& strPath);
 
+private:
+	HANDLE	m_hToken;
 };
 

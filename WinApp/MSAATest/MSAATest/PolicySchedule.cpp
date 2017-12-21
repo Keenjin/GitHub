@@ -42,11 +42,6 @@ void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj)
 
 	for (size_t i = 0; i < GetPolicyItemCount(uIndex); i++)
 	{
-		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_REMOVE))
-		{
-			break;
-		}
-
 		CAtlString strGuid = GetPolicyItemGuid(uIndex, i);
 		CComPtr<CPolicyBase> pPolicy = GetPolicy(strGuid);
 		if (!pPolicy)

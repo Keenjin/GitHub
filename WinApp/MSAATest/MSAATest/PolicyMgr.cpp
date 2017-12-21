@@ -144,12 +144,6 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 			m_TaskContainer.RemoveWnd(hWnd);
 			break;
 		}
-		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_ADD))
-		{
-			// ÃÌº”»ŒŒÒ
-			m_TaskPool.AddTask(pObj);
-			break;
-		}
 		if (GetValue<BOOL>(pObj, POLICY_INDEX_GROUP_END))
 		{
 			break;

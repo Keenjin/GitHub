@@ -81,3 +81,17 @@ DWORD HELP_API::PROCESS_THREAD_API::GetProcessIDFromName(CAtlString strName)
 
 	return dwProcessID;
 }
+
+
+BOOL HELP_API::PROCESS_THREAD_API::EnablePrivilege(HANDLE hToken, LPCWSTR szPrivName)
+{
+	TOKEN_PRIVILEGES tkp;
+
+	LookupPrivilegeValue(NULL, szPrivName, &tkp.Privileges[0].Luid);//修改进程权限  
+	tkp.PrivilegeCount = 1;
+	tkp.Privileges[0].Attributes = SE_PRIVILEGE_ENABLED;
+	AdjustTokenPrivileges(hToken, FALSE, &tkp, sizeof tkp, NULL, NULL);//通知系统修改进程权限  
+
+	return((GetLastError() == ERROR_SUCCESS));
+
+}
