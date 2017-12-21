@@ -30,7 +30,7 @@ void CPolicySchedule::UnInit()
 	UnLoad();
 }
 
-void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, BOOL& bFinish)
+void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj)
 {
 	if (!pObj)
 	{
@@ -42,6 +42,11 @@ void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, 
 
 	for (size_t i = 0; i < GetPolicyItemCount(uIndex); i++)
 	{
+		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_REMOVE))
+		{
+			break;
+		}
+
 		CAtlString strGuid = GetPolicyItemGuid(uIndex, i);
 		CComPtr<CPolicyBase> pPolicy = GetPolicy(strGuid);
 		if (!pPolicy)
@@ -56,6 +61,5 @@ void CPolicySchedule::PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, 
 		}
 	}
 
-	bFinish = GetValue<BOOL>(pObj, POLICY_INDEX_GROUP_END);
 	SetValue(pObj, POLICY_INDEX_GROUP_ITEM_END, FALSE);		// 清除标记位
 }

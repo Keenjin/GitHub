@@ -1,5 +1,5 @@
 #pragma once
-#include <queue>
+#include <list>
 
 template<typename TObj>
 class CTaskContainer
@@ -20,7 +20,7 @@ protected:
 	void AddTail(TObj obj)
 	{
 		CAutoCriticalSection lock(m_csTaskObjs);
-		m_qTaskObjs.push(obj);
+		m_qTaskObjs.push_back(obj);
 	}
 
 	TObj PopHead()
@@ -31,7 +31,7 @@ protected:
 		if (!m_qTaskObjs.empty())
 		{
 			obj = m_qTaskObjs.front();
-			m_qTaskObjs.pop();
+			m_qTaskObjs.erase(m_qTaskObjs.begin());
 		}
 
 		return obj;
@@ -40,14 +40,11 @@ protected:
 	void Clear()
 	{
 		CAutoCriticalSection lock(m_csTaskObjs);
-		while (!m_qTaskObjs.empty())
-		{
-			m_qTaskObjs.pop();
-		}
+		m_qTaskObjs.clear();
 	}
 
-private:
+protected:
 	CComAutoCriticalSection	m_csTaskObjs;
-	std::queue<TObj>	m_qTaskObjs;
+	std::list<TObj>	m_qTaskObjs;
 };
 

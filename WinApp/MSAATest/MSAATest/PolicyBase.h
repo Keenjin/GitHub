@@ -13,6 +13,7 @@ public:
 
 class __declspec(uuid("{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}")) CPreFilterPolicy;
 class __declspec(uuid("{B9EB5E40-136C-4F29-AFF0-77D28F8B69EC}")) CEventFilterPolicy;
+class __declspec(uuid("{DA1920A3-5E14-4D22-B7CB-468CF00696A6}")) CQueryWndInfoPolicy;
 class __declspec(uuid("{782D2174-75AD-4B91-92C5-8A0775E15925}")) CBlockWndPolicy;
 class __declspec(uuid("{6FD70639-370F-4E21-80F9-5B780969AFF6}")) CReportPolicy;
 
@@ -24,5 +25,6 @@ class __declspec(uuid("{6FD70639-370F-4E21-80F9-5B780969AFF6}")) CReportPolicy;
 
 #include "PreFilterPolicy.h"
 #include "EventFilterPolicy.h"
+#include "QueryWndInfoPolicy.h"
 #include "BlockWndPolicy.h"
 #include "ReportPolicy.h"

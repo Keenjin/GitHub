@@ -125,21 +125,32 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 	HWND hWnd = (HWND)GetValue<ULONGLONG>(pObj, POLICY_INDEX_HWND);
 	DWORD dwThreadID = GetValue<DWORD>(pObj, POLICY_INDEX_TID);
 
-	LOG_PRINT(L"Enter %s, event(%s),hwnd(0x%0x),idObject(%s),idChild(%s),dwEventThread(%d),CurrentThread(%d)",
+	LOG_PRINT(L"Enter %s, event(%s),hwnd(0x%0x),idObject(%s),idChild(%s),dwEventThread(%d),CurrentThread(%d), taskcnt(%d)",
 		__FUNCTIONW__,
 		HELP_API::WND_EVENT_API::WndEventName(dwEvent),
 		hWnd,
 		HELP_API::WND_EVENT_API::CtrlObjectName(dwIdObject),
 		HELP_API::WND_EVENT_API::ChildIDName(dwIdChild),
 		dwThreadID,
-		GetCurrentThreadId());
+		GetCurrentThreadId(), m_TaskContainer.GetCount());
 
 	for (size_t i = 0; i < m_PolicySched.GetPolicyGroupCnt(); i++)
 	{
 		// 按照分组，依次执行下去
-		BOOL bFinish = FALSE;
-		m_PolicySched.PolicyGroupHandler(i, pObj, bFinish);
-		if (bFinish)
+		m_PolicySched.PolicyGroupHandler(i, pObj);
+		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_REMOVE))
+		{
+			// 移除任务
+			m_TaskContainer.RemoveWnd(hWnd);
+			break;
+		}
+		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_ADD))
+		{
+			// 添加任务
+			m_TaskPool.AddTask(pObj);
+			break;
+		}
+		if (GetValue<BOOL>(pObj, POLICY_INDEX_GROUP_END))
 		{
 			break;
 		}

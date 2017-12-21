@@ -30,6 +30,9 @@ enum EPolicyObjIndex
 	POLICY_INDEX_GROUP_END = 100,
 	POLICY_INDEX_GROUP_ITEM_END,
 	POLICY_INDEX_GROUP_CURRENT_GID,
+	POLICY_INDEX_TASK_REMOVE,
+	POLICY_INDEX_TASK_ADD,
+	POLICY_INDEX_LAST_LOCATION_CHANGE,
 
 	POLICY_INDEX_MAX
 };
@@ -53,18 +56,6 @@ inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value);
 
 template<>
 inline int GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
-{
-	int nValue = 0;
-	if (pObj) {
-		CComVariant varVal;
-		pObj->GetParam(uIndex, &varVal);
-		nValue = varVal.intVal;
-	}
-	return nValue;
-}
-
-template<>
-inline BOOL GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 {
 	int nValue = 0;
 	if (pObj) {

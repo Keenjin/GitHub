@@ -13,6 +13,6 @@ public:
 	HRESULT Init();
 	void UnInit();
 
-	void PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj, BOOL& bFinish);
+	void PolicyGroupHandler(UINT uIndex, CComPtr<IPolicyObj> pObj);
 };
 

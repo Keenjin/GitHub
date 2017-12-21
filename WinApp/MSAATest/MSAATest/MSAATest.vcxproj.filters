@@ -141,6 +141,9 @@
     <ClInclude Include="EventFilterPolicy.h">
       <Filter>Policy\PolicyItem</Filter>
     </ClInclude>
+    <ClInclude Include="QueryWndInfoPolicy.h">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -186,6 +189,9 @@
       <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
     <ClCompile Include="EventFilterPolicy.cpp">
+      <Filter>Policy\PolicyItem</Filter>
+    </ClCompile>
+    <ClCompile Include="QueryWndInfoPolicy.cpp">
       <Filter>Policy\PolicyItem</Filter>
     </ClCompile>
   </ItemGroup>

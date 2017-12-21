@@ -117,6 +117,7 @@ private:
 
 		hr &= TryCreate<CPreFilterPolicy>(strGuid, guid);
 		hr &= TryCreate<CEventFilterPolicy>(strGuid, guid);
+		hr &= TryCreate<CQueryWndInfoPolicy>(strGuid, guid);
 		hr &= TryCreate<CBlockWndPolicy>(strGuid, guid);
 		hr &= TryCreate<CReportPolicy>(strGuid, guid);
 

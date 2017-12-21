@@ -72,8 +72,8 @@ HRESULT STDMETHODCALLTYPE CReportPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
 		strLog.Format(L"%s, event -- Event(%s),hWnd(0x%0x),idObject(%s),idChild(%s),EventThreadID(%d),CurrentThreadID(%d)",
 			__FUNCTIONW__, WndEventName(dwEvent), hWnd, CtrlObjectName(dwIdObject), ChildIDName(dwIdChild), dwThreadID, GetCurrentThreadId());
 		OutputDebugString(strLog);
-		strLog.Format(L"%s, desc  -- ChildCount(%d),Name(%s),Role(%s),State(%s),Value(%s),Desc(%s),Help(%s),HelpTopic(%s),TopicID(%d),KeyboardShortcut(%s),defAction(%s)",
-			__FUNCTIONW__, lChildCount, bstrName, strRoleText, strStateText, bstrValue, bstrDesc, bstrHelp, bstrHelpTopic, lIDTopic, bstrKeyboardShortcut, bstrDefAction);
+		strLog.Format(L"%s, desc  -- hWnd(0x%0x),ChildCount(%d),Name(%s),Role(%s),State(%s),Value(%s),Desc(%s),Help(%s),HelpTopic(%s),TopicID(%d),KeyboardShortcut(%s),defAction(%s)",
+			__FUNCTIONW__, hWnd, lChildCount, bstrName, strRoleText, strStateText, bstrValue, bstrDesc, bstrHelp, bstrHelpTopic, lIDTopic, bstrKeyboardShortcut, bstrDefAction);
 		OutputDebugString(strLog);
 
 		pAcc->Release();

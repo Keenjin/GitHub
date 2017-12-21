@@ -98,6 +98,7 @@
     <ClInclude Include="PolicyObjImpl.h" />
     <ClInclude Include="PolicySchedule.h" />
     <ClInclude Include="PreFilterPolicy.h" />
+    <ClInclude Include="QueryWndInfoPolicy.h" />
     <ClInclude Include="rapid\rapidxml.hpp" />
     <ClInclude Include="rapid\rapidxml_iterators.hpp" />
     <ClInclude Include="rapid\rapidxml_print.hpp" />
@@ -124,6 +125,7 @@
     <ClCompile Include="PolicyMgr.cpp" />
     <ClCompile Include="PolicySchedule.cpp" />
     <ClCompile Include="PreFilterPolicy.cpp" />
+    <ClCompile Include="QueryWndInfoPolicy.cpp" />
     <ClCompile Include="ReportPolicy.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

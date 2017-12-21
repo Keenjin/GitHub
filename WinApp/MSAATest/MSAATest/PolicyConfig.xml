@@ -4,6 +4,7 @@
     <PolicyGroup gid="0" name="前置拦截分组">
       <PolicyItem name="前置过滤策略" guid="{BCC210E9-91C2-44C8-A5D3-CFE72DAD5DB4}" />
       <PolicyItem name="Event过滤策略" guid="{B9EB5E40-136C-4F29-AFF0-77D28F8B69EC}" />
+      <PolicyItem name="窗口信息获取策略" guid="{DA1920A3-5E14-4D22-B7CB-468CF00696A6}" />
       <PolicyItem name="拦截策略" guid="{782D2174-75AD-4B91-92C5-8A0775E15925}" />
       <PolicyItem name="数据上报策略" guid="{6FD70639-370F-4E21-80F9-5B780969AFF6}" />
     </PolicyGroup>

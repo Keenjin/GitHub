@@ -64,9 +64,9 @@ BOOL CPolicyConfig::Load()
 		{
 			POLICY_GROUP policyGroup;
 
-			policyGroup.dwGID = xmlParser.GetAttrib<DWORD>(POLICY_CONFIG_POLICY_GROUP_ATTR_GID);
+			policyGroup.uGID = xmlParser.GetAttrib<DWORD>(POLICY_CONFIG_POLICY_GROUP_ATTR_GID);
 			policyGroup.strName = xmlParser.GetAttrib<CAtlString>(POLICY_CONFIG_POLICY_GROUP_ATTR_NAME);
-			LOG_PRINT(L"%s, PolicyGroup gid(%d),name(%s)", __FUNCTIONW__, policyGroup.dwGID, policyGroup.strName);
+			LOG_PRINT(L"%s, PolicyGroup gid(%d),name(%s)", __FUNCTIONW__, policyGroup.uGID, policyGroup.strName);
 
 			xmlParser.IntoElem();
 			while (xmlParser.FindElem(POLICY_CONFIG_POLICY_GROUP_ITEM))
