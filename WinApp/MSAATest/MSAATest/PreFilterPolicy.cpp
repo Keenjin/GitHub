@@ -21,7 +21,7 @@ void STDMETHODCALLTYPE CPreFilterPolicy::UnInit()
 {
 }
 
-HRESULT STDMETHODCALLTYPE CPreFilterPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
+HRESULT STDMETHODCALLTYPE CPreFilterPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
 {
 	if (!pPolicyObj)
 	{

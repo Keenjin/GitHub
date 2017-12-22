@@ -81,7 +81,7 @@ public:
 		Stop();
 	}
 
-	void AddTask(TObj& obj)
+	void AddTask(TObj obj)
 	{
 		if (IsQuit())
 		{

@@ -10,7 +10,7 @@ public:
 
 	virtual HRESULT STDMETHODCALLTYPE Init();
 	virtual void STDMETHODCALLTYPE UnInit();
-	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(IPolicyObj* pPolicyObj);
+	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(CComPtr<IPolicyObj> pPolicyObj);
 
 private:
 	BOOL GetProcCmdline(HANDLE hProcess, CAtlString& strCmdline, LPDWORD lpParentPID = NULL);

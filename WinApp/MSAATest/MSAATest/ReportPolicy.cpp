@@ -14,7 +14,7 @@ CReportPolicy::~CReportPolicy()
 }
 
 
-HRESULT STDMETHODCALLTYPE CReportPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
+HRESULT STDMETHODCALLTYPE CReportPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
 {
 	if (!pPolicyObj)
 	{

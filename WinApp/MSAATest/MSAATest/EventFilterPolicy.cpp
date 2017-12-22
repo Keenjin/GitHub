@@ -19,7 +19,7 @@ void STDMETHODCALLTYPE CEventFilterPolicy::UnInit()
 
 }
 
-HRESULT STDMETHODCALLTYPE CEventFilterPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
+HRESULT STDMETHODCALLTYPE CEventFilterPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
 {
 	if (!pPolicyObj)
 	{
@@ -72,6 +72,7 @@ HRESULT STDMETHODCALLTYPE CEventFilterPolicy::PolicyHandler(IPolicyObj* pPolicyO
 				// 最多经过5s等待，再多了，就可能是对抗引起的
 				int nTryTimes = 5;
 				CRect rcLast = rcWnd;
+				CComPtr<IPolicyObj> pObj = pPolicyObj;
 				while (nTryTimes--)
 				{
 					Sleep(1000);

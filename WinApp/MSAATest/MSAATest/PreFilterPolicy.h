@@ -12,7 +12,7 @@ public:
 
 	virtual HRESULT STDMETHODCALLTYPE Init();
 	virtual void STDMETHODCALLTYPE UnInit();
-	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(IPolicyObj* pPolicyObj);
+	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(CComPtr<IPolicyObj> pPolicyObj);
 
 private:
 	BOOL IsHitSysWnd(HWND hWnd);

@@ -16,6 +16,7 @@ HRESULT CPolicySchedule::Init()
 	{
 		if (!Load())
 		{
+			LOG_PRINT(L"%s, load failed.", __FUNCTIONW__);
 			break;
 		}
 

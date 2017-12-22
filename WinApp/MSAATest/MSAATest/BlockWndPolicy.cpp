@@ -9,7 +9,7 @@ CBlockWndPolicy::~CBlockWndPolicy()
 {
 }
 
-HRESULT STDMETHODCALLTYPE CBlockWndPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
+HRESULT STDMETHODCALLTYPE CBlockWndPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
 {
 	return S_OK;
 }

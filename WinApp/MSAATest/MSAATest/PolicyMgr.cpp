@@ -136,6 +136,11 @@ void CPolicyMgr::OnHandlePolicy(CComPtr<IPolicyObj> pObj)
 
 	for (size_t i = 0; i < m_PolicySched.GetPolicyGroupCnt(); i++)
 	{
+		if (m_TaskContainer.GetFlag(hWnd) == TASK_OBJ_FLAG_REMOVE)
+		{
+			break;
+		}
+
 		// 按照分组，依次执行下去
 		m_PolicySched.PolicyGroupHandler(i, pObj);
 		if (GetValue<BOOL>(pObj, POLICY_INDEX_TASK_REMOVE))

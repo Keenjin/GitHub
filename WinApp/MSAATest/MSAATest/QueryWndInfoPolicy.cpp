@@ -31,7 +31,7 @@ void STDMETHODCALLTYPE CQueryWndInfoPolicy::UnInit()
 	}
 }
 
-HRESULT STDMETHODCALLTYPE CQueryWndInfoPolicy::PolicyHandler(IPolicyObj* pPolicyObj)
+HRESULT STDMETHODCALLTYPE CQueryWndInfoPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
 {
 	if (!pPolicyObj)
 	{

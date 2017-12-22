@@ -55,13 +55,13 @@ public:
 
 
 template<typename T>
-inline T GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex);
+inline T GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex);
 
 template<typename T>
-inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value);
+inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, T value);
 
 template<>
-inline int GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+inline int GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex)
 {
 	int nValue = 0;
 	if (pObj) {
@@ -73,7 +73,7 @@ inline int GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 }
 
 template<>
-inline DWORD GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+inline DWORD GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex)
 {
 	DWORD dwValue = 0;
 	if (pObj)	{
@@ -85,7 +85,7 @@ inline DWORD GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 }
 
 template<>
-inline LONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+inline LONG GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex)
 {
 	LONG lValue = 0;
 	if (pObj)	{
@@ -97,7 +97,7 @@ inline LONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 }
 
 template<>
-inline ULONGLONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+inline ULONGLONG GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex)
 {
 	ULONGLONG ullValue = 0;
 	if (pObj) {
@@ -109,7 +109,7 @@ inline ULONGLONG GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 }
 
 template<>
-inline CAtlString GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
+inline CAtlString GetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex)
 {
 	CAtlString strValue = 0;
 	if (pObj) {
@@ -122,7 +122,7 @@ inline CAtlString GetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex)
 
 
 template<typename T>
-inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value)
+inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, T value)
 {
 	BOOL bRet = FALSE;
 
@@ -141,7 +141,7 @@ inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, T value)
 }
 
 template<>
-inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, DWORD value)
+inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, DWORD value)
 {
 	BOOL bRet = FALSE;
 
@@ -160,7 +160,7 @@ inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, DWORD value)
 }
 
 template<>
-inline BOOL SetValue(IPolicyObj* pObj, EPolicyObjIndex uIndex, CAtlString value)
+inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, CAtlString value)
 {
 	BOOL bRet = FALSE;
 

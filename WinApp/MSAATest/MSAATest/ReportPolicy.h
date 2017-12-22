@@ -10,6 +10,6 @@ public:
 
 	virtual HRESULT STDMETHODCALLTYPE Init() { return S_OK; };
 	virtual void STDMETHODCALLTYPE UnInit() {};
-	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(IPolicyObj* pPolicyObj);
+	virtual HRESULT STDMETHODCALLTYPE PolicyHandler(CComPtr<IPolicyObj> pPolicyObj);
 };
 
