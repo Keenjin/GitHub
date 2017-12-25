@@ -20,7 +20,8 @@ public:
 	virtual HRESULT STDMETHODCALLTYPE SetParam(UINT uIndex, VARIANT varVal)
 	{
 		CAutoCriticalSection lock(m_csForMap);
-		m_mapKeyValue.insert(std::pair<UINT, ATL::CComVariant>(uIndex, varVal));
+		m_mapKeyValue[uIndex] = varVal;
+		//m_mapKeyValue.insert(std::pair<UINT, ATL::CComVariant>(uIndex, varVal));
 		return S_OK;
 	}
 
@@ -38,11 +39,7 @@ public:
 
 private:
 	CPolicyObj(){}
-	virtual ~CPolicyObj() 
-	{
-		CAutoCriticalSection lock(m_csForMap);
-		m_mapKeyValue.clear();
-	}
+	virtual ~CPolicyObj() {}
 
 private:
 	ATL::CComAutoCriticalSection m_csForMap;

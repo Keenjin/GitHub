@@ -171,7 +171,11 @@ inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, CAtlStrin
 			break;
 		}
 
-		bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant(value.GetString())));
+		if (!value.IsEmpty())
+		{
+			LOG_PRINT(L"%s, %s, len(%d)", __FUNCTIONW__, value.GetString(), value.GetLength());
+			bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant(value)));
+		}
 
 	} while (FALSE);
 

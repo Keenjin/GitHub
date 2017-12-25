@@ -128,22 +128,28 @@ public:
 
 			// 周期
 			LONGLONG lastToNow = cpuSysTime.KernelTimeDiff(m_PreCpuTimeForProc.ftKernelTime) + cpuSysTime.UserTimeDiff(m_PreCpuTimeForProc.ftUserTime);
-
-			// 进程消耗的CPU时间 = 进程消耗的内核态时间 + 进程消耗的用户态时间，即 costTime = kernelTime + UserTime
-			// 进程的CPU占用率 = 进程消耗的CPU时间 / 刷新周期
-			CPU_TIME cpuTime;
-			GetProcessTimes(hProcess, NULL, NULL, &cpuTime.ftKernelTime, &cpuTime.ftUserTime);
-			
-			if (m_mapPreProcCpuTimes.find(hProcess) != m_mapPreProcCpuTimes.end())
+			if (lastToNow == 0)
 			{
-				LONGLONG kernel = cpuTime.IdleTimeDiff(m_PreCpuTime.ftKernelTime);
-				LONGLONG user = cpuTime.IdleTimeDiff(m_PreCpuTime.ftUserTime);
-				LONGLONG cpu = (kernel + user) * 100 / lastToNow;
-
-				bHigh = (cpu > dwPercent);
+				bHigh = FALSE;
 			}
+			else
+			{
+				// 进程消耗的CPU时间 = 进程消耗的内核态时间 + 进程消耗的用户态时间，即 costTime = kernelTime + UserTime
+				// 进程的CPU占用率 = 进程消耗的CPU时间 / 刷新周期
+				CPU_TIME cpuTime;
+				GetProcessTimes(hProcess, NULL, NULL, &cpuTime.ftKernelTime, &cpuTime.ftUserTime);
 
-			m_mapPreProcCpuTimes.insert(std::pair<HANDLE, CPU_TIME>(hProcess, cpuTime));
+				if (m_mapPreProcCpuTimes.find(hProcess) != m_mapPreProcCpuTimes.end())
+				{
+					LONGLONG kernel = cpuTime.IdleTimeDiff(m_PreCpuTime.ftKernelTime);
+					LONGLONG user = cpuTime.IdleTimeDiff(m_PreCpuTime.ftUserTime);
+					LONGLONG cpu = (kernel + user) * 100 / lastToNow;
+
+					bHigh = (cpu > dwPercent);
+				}
+
+				m_mapPreProcCpuTimes.insert(std::pair<HANDLE, CPU_TIME>(hProcess, cpuTime));
+			}
 
 		} while (FALSE);
 		

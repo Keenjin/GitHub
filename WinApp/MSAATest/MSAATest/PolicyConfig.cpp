@@ -31,14 +31,14 @@ BOOL CPolicyConfig::Load()
 	do
 	{
 		CAtlString strCfgDir;
-		GetModuleFileName(NULL, strCfgDir.GetBufferSetLength(MAX_PATH + 1), MAX_PATH);
+		/*GetModuleFileName(NULL, strCfgDir.GetBufferSetLength(MAX_PATH + 1), MAX_PATH);
 		strCfgDir.ReleaseBuffer();
 		PathRemoveFileSpec(strCfgDir.GetBuffer());
 		strCfgDir.ReleaseBuffer();
 		if (!strCfgDir.IsEmpty() && (strCfgDir.Right(1) != L'\\' || strCfgDir.Right(1) != L'/'))
 		{
 			strCfgDir += L"\\";
-		}
+		}*/
 		CAtlString strFilePath = strCfgDir + L"PolicyConfig.xml";
 		if (!ATLPath::FileExists(strFilePath))
 		{

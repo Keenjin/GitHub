@@ -147,7 +147,8 @@ BOOL CQueryWndInfoPolicy::GetProcCmdline(HANDLE hProcess, CAtlString& strCmdline
 					RTL_USER_PROCESS_PARAMETERS upps;
 					if (ReadProcessMemory(hNewDup, peb.ProcessParameters, &upps, sizeof(RTL_USER_PROCESS_PARAMETERS), 0))
 					{
-						ReadProcessMemory(hNewDup, upps.CommandLine.Buffer, strCmdline.GetBufferSetLength(upps.CommandLine.Length + 1), upps.CommandLine.Length, 0);
+						SIZE_T szReaded = 0;
+						ReadProcessMemory(hNewDup, upps.CommandLine.Buffer, strCmdline.GetBufferSetLength(upps.CommandLine.Length / 2 + 1), upps.CommandLine.Length, &szReaded);
 						strCmdline.ReleaseBuffer();
 						bRet = TRUE;
 					}
@@ -175,7 +176,7 @@ BOOL CQueryWndInfoPolicy::DeviceDosPathToNTPath(CAtlString& strPath)
 
 			szDriver[0] = szDriveStr[i];
 			szDriver[1] = szDriveStr[i + 1];
-			szDriver[2] = '\0';
+			szDriver[2] = L'\0';
 			if (!QueryDosDevice(szDriver, szDevName, MAX_PATH))	// 查询 Dos 设备名 
 			{
 				break;
