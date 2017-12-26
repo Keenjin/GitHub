@@ -17,7 +17,7 @@ public:
 		return E_FAIL;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE SetParam(UINT uIndex, VARIANT varVal)
+	virtual HRESULT STDMETHODCALLTYPE SetParam(UINT uIndex, ATL::CComVariant varVal)
 	{
 		CAutoCriticalSection lock(m_csForMap);
 		m_mapKeyValue[uIndex] = varVal;
@@ -25,7 +25,7 @@ public:
 		return S_OK;
 	}
 
-	virtual HRESULT STDMETHODCALLTYPE GetParam(UINT uIndex, VARIANT* pvarVal)
+	virtual HRESULT STDMETHODCALLTYPE GetParam(UINT uIndex, ATL::CComVariant* pvarVal)
 	{
 		CAutoCriticalSection lock(m_csForMap);
 		if (m_mapKeyValue.find(uIndex) != m_mapKeyValue.end())

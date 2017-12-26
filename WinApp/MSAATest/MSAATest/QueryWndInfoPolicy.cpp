@@ -147,9 +147,11 @@ BOOL CQueryWndInfoPolicy::GetProcCmdline(HANDLE hProcess, CAtlString& strCmdline
 					RTL_USER_PROCESS_PARAMETERS upps;
 					if (ReadProcessMemory(hNewDup, peb.ProcessParameters, &upps, sizeof(RTL_USER_PROCESS_PARAMETERS), 0))
 					{
+						CAtlString strCmdBuf;
 						SIZE_T szReaded = 0;
-						ReadProcessMemory(hNewDup, upps.CommandLine.Buffer, strCmdline.GetBufferSetLength(upps.CommandLine.Length / 2 + 1), upps.CommandLine.Length, &szReaded);
-						strCmdline.ReleaseBuffer();
+						ReadProcessMemory(hNewDup, upps.CommandLine.Buffer, strCmdBuf.GetBufferSetLength(upps.CommandLine.Length / 2 + 1), upps.CommandLine.Length, &szReaded);
+						strCmdBuf.ReleaseBuffer();
+						strCmdline = strCmdBuf;
 						bRet = TRUE;
 					}
 				}

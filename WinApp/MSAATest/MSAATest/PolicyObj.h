@@ -49,8 +49,8 @@ MIDL_INTERFACE("72B04B47-5AED-432D-860E-1937C4A7EE6D")
 IPolicyObj : public IUnknown
 {
 public:
-	virtual HRESULT STDMETHODCALLTYPE SetParam(UINT uIndex, VARIANT varVal) = 0;
-	virtual HRESULT STDMETHODCALLTYPE GetParam(UINT uIndex, VARIANT* pvarVal) = 0;
+	virtual HRESULT STDMETHODCALLTYPE SetParam(UINT uIndex, ATL::CComVariant varVal) = 0;
+	virtual HRESULT STDMETHODCALLTYPE GetParam(UINT uIndex, ATL::CComVariant* pvarVal) = 0;
 };
 
 
@@ -173,8 +173,7 @@ inline BOOL SetValue(CComPtr<IPolicyObj> pObj, EPolicyObjIndex uIndex, CAtlStrin
 
 		if (!value.IsEmpty())
 		{
-			LOG_PRINT(L"%s, %s, len(%d)", __FUNCTIONW__, value.GetString(), value.GetLength());
-			bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant(value)));
+			bRet = SUCCEEDED(pObj->SetParam(uIndex, CComVariant((LPCTSTR)value.GetString())));
 		}
 
 	} while (FALSE);

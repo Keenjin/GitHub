@@ -26,23 +26,29 @@ CPolicyConfig::~CPolicyConfig()
 
 BOOL CPolicyConfig::Load()
 {
+#define POLICY_CONFIG_FILE_PATH_NAME		_T("PolicyConfig.xml")
 	BOOL bRet = FALSE;
 
 	do
 	{
-		CAtlString strCfgDir;
-		/*GetModuleFileName(NULL, strCfgDir.GetBufferSetLength(MAX_PATH + 1), MAX_PATH);
-		strCfgDir.ReleaseBuffer();
-		PathRemoveFileSpec(strCfgDir.GetBuffer());
-		strCfgDir.ReleaseBuffer();
-		if (!strCfgDir.IsEmpty() && (strCfgDir.Right(1) != L'\\' || strCfgDir.Right(1) != L'/'))
-		{
-			strCfgDir += L"\\";
-		}*/
-		CAtlString strFilePath = strCfgDir + L"PolicyConfig.xml";
+		CAtlString strFilePath = POLICY_CONFIG_FILE_PATH_NAME;
 		if (!ATLPath::FileExists(strFilePath))
 		{
-			break;
+			CAtlString strCfgDir;
+			GetModuleFileName(NULL, strCfgDir.GetBufferSetLength(MAX_PATH + 1), MAX_PATH);
+			strCfgDir.ReleaseBuffer();
+			PathRemoveFileSpec(strCfgDir.GetBuffer());
+			strCfgDir.ReleaseBuffer();
+			if (!strCfgDir.IsEmpty() && (strCfgDir.Right(1) != L'\\' || strCfgDir.Right(1) != L'/'))
+			{
+				strCfgDir += L"\\";
+			}
+
+			strFilePath = strCfgDir + POLICY_CONFIG_FILE_PATH_NAME;
+			if (!ATLPath::FileExists(strFilePath))
+			{
+				break;
+			}
 		}
 		LOG_PRINT(L"%s, config file(%s)", __FUNCTIONW__, strFilePath);
 

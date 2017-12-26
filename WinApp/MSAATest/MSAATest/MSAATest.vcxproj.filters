@@ -40,6 +40,9 @@
     <Filter Include="Policy\Config">
       <UniqueIdentifier>{fd614e6c-ef6f-49ab-b229-80934e2e542e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Common\Exception">
+      <UniqueIdentifier>{970a8bd7-3701-4984-bfcd-65e1243a0449}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
