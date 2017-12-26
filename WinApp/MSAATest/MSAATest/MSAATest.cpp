@@ -5,6 +5,7 @@
 #include "MSAATest.h"
 #include <oleacc.h>
 #include "WinEventApp.h"
+#include "CrashReport.h"
 
 
 #pragma comment(lib, "oleacc.lib")
@@ -30,6 +31,8 @@ int APIENTRY _tWinMain(_In_ HINSTANCE hInstance,
 {
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
+
+	CCrashReport::Instance().ProccessEnter();
 
  	// TODO:  在此放置代码。
 	MSG msg;

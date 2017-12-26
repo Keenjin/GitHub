@@ -1,8 +1,11 @@
 #include "stdafx.h"
 #include "Thread.h"
+#include "CrashReport.h"
 
 unsigned __stdcall __THREAD_PROC(void* pArguments)
 {
+	CCrashReport::Instance().ThreadEnter();
+
 	IThreadProcCallback* pThis = (IThreadProcCallback*)pArguments;
 	if (pThis)
 	{
@@ -15,6 +18,8 @@ unsigned __stdcall __THREAD_PROC(void* pArguments)
 
 unsigned __stdcall __MUL_THREAD_PROC(void* pArguments)
 {
+	CCrashReport::Instance().ThreadEnter();
+
 	THREAD_PROC_PARAM* pThis = (THREAD_PROC_PARAM*)pArguments;
 	if (pThis && pThis->pCallbackObj)
 	{

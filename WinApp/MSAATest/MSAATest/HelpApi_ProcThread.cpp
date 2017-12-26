@@ -84,9 +84,9 @@ DWORD HELP_API::PROCESS_THREAD_API::GetProcessIDFromName(CAtlString strName)
 
 BOOL HELP_API::PROCESS_THREAD_API::EnableDebugPrivilege(BOOL bEnable)
 {
-	HANDLE hToken = NULL;
-	OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken);
-	EnablePrivilege(hToken, SE_DEBUG_NAME);
+	ATL::CHandle hToken;
+	OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &hToken.m_h);
+	return EnablePrivilege(hToken, SE_DEBUG_NAME);
 }
 
 BOOL HELP_API::PROCESS_THREAD_API::EnablePrivilege(HANDLE hToken, LPCWSTR szPrivName)
