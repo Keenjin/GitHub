@@ -15,6 +15,7 @@ namespace HELP_API
 		DWORD GetProcessIDFromThreadID(DWORD dwThreadID);
 		DWORD GetProcessIDFromName(CAtlString strName);
 
+		BOOL EnableDebugPrivilege(BOOL bEnable);
 		BOOL EnablePrivilege(HANDLE hToken, LPCWSTR szPrivName);
 	};
 };

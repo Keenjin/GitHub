@@ -6,7 +6,6 @@
 #include <Psapi.h>
 
 CQueryWndInfoPolicy::CQueryWndInfoPolicy()
-	: m_hToken(NULL)
 {
 }
 
@@ -15,20 +14,13 @@ CQueryWndInfoPolicy::~CQueryWndInfoPolicy()
 }
 
 HRESULT STDMETHODCALLTYPE CQueryWndInfoPolicy::Init()
-{
-	// 提升进程权限
-	OpenProcessToken(GetCurrentProcess(), TOKEN_ADJUST_PRIVILEGES, &m_hToken);
-	HELP_API::PROCESS_THREAD_API::EnablePrivilege(m_hToken, SE_DEBUG_NAME);
+{	
 	return S_OK;
 }
 
 void STDMETHODCALLTYPE CQueryWndInfoPolicy::UnInit()
 {
-	if (m_hToken)
-	{
-		CloseHandle(m_hToken);
-		m_hToken = NULL;
-	}
+
 }
 
 HRESULT STDMETHODCALLTYPE CQueryWndInfoPolicy::PolicyHandler(CComPtr<IPolicyObj> pPolicyObj)
@@ -62,7 +54,9 @@ HRESULT STDMETHODCALLTYPE CQueryWndInfoPolicy::PolicyHandler(CComPtr<IPolicyObj>
 	// 建立一个PID缓存表，每次先从PID缓存表里面取数据，能够取出来，就以PID缓存表为准，无法取出来，则重新取
 
 	CHandle hProcess;
+	HELP_API::PROCESS_THREAD_API::EnableDebugPrivilege(TRUE);
 	hProcess.Attach(OpenProcess(PROCESS_ALL_ACCESS, FALSE, dwProcId));
+	HELP_API::PROCESS_THREAD_API::EnableDebugPrivilege(FALSE);
 	if (hProcess && hProcess.m_h != INVALID_HANDLE_VALUE)
 	{
 		CAtlString strProcPath;
