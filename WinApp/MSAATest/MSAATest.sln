@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 2013
+VisualStudioVersion = 12.0.40629.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "MSAATest", "MSAATest\MSAATest.vcxproj", "{E9392603-4B78-4EA5-A1D8-9033CF8B3B08}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestDriverType", "TestDriverType\TestDriverType.vcxproj", "{E53778A6-1A2F-4ECC-A19C-47F453605AB1}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Exception", "Exception\Exception.vcxproj", "{3781B727-1B4D-477E-9686-719E847C1878}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileDiskBlockSave", "FileDiskBlockSave\FileDiskBlockSave.vcxproj", "{128D4894-2D46-4FDF-B774-F01CDD0345A2}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSave", "FileSave\FileSave.vcxproj", "{5663F191-E623-41E5-B85E-B91C095E3051}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -45,6 +49,18 @@ Global
 		{3781B727-1B4D-477E-9686-719E847C1878}.Release|Win32.Build.0 = Release|Win32
 		{3781B727-1B4D-477E-9686-719E847C1878}.Release|x64.ActiveCfg = Release|x64
 		{3781B727-1B4D-477E-9686-719E847C1878}.Release|x64.Build.0 = Release|x64
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Debug|Win32.ActiveCfg = Debug|Win32
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Debug|Win32.Build.0 = Debug|Win32
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Debug|x64.ActiveCfg = Debug|Win32
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Release|Win32.ActiveCfg = Release|Win32
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Release|Win32.Build.0 = Release|Win32
+		{128D4894-2D46-4FDF-B774-F01CDD0345A2}.Release|x64.ActiveCfg = Release|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Debug|Win32.ActiveCfg = Debug|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Debug|Win32.Build.0 = Debug|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Debug|x64.ActiveCfg = Debug|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|Win32.ActiveCfg = Release|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|Win32.Build.0 = Release|Win32
+		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
