@@ -29,6 +29,7 @@ typedef struct _SAFEBK_FIRST_BLOCK
 {
 	time_t bktime;
 	uint64_t filesize;
+	uint16_t filenamelen;
 	WCHAR filename[1];
 } SAFEBK_FIRST_BLOCK, *PSAFEBK_FIRST_BLOCK;
 #pragma pack(pop)
@@ -56,7 +57,7 @@ CFileClusterTag::~CFileClusterTag()
 {
 }
 
-HRESULT CFileClusterTag::AddTag(LPCWSTR wsFileNoTag, LPCWSTR wsFileTag, BOOL bDelOld/* = TRUE*/)
+HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag, __in BOOL bDelOld/* = TRUE*/)
 {
 	HRESULT hr = E_FAIL;
 
@@ -95,7 +96,9 @@ HRESULT CFileClusterTag::AddTag(LPCWSTR wsFileNoTag, LPCWSTR wsFileTag, BOOL bDe
 		PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
 		time(&pInfo->bktime);
 		pInfo->filesize = (uint64_t)ullLen;
-		wcscpy(pInfo->filename, wsFileNoTag);
+		size_t uNameLen = wcslen(wsFileNoTag);
+		pInfo->filenamelen = uNameLen * 2;
+		memcpy(pInfo->filename, wsFileNoTag, pInfo->filenamelen);
 		pBlock->crc = CalcBlockCRC(pBlock, nBlockSize);
 
 		hr = fDst.Write(pBlock, nBlockSize);
@@ -136,7 +139,7 @@ HRESULT CFileClusterTag::AddTag(LPCWSTR wsFileNoTag, LPCWSTR wsFileTag, BOOL bDe
 	return hr;
 }
 
-HRESULT CFileClusterTag::RemoveTag(LPCWSTR wsFileTag, LPCWSTR wsFileNoTag, BOOL bDelOld/* = TRUE*/)
+HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNoTag, __in BOOL bDelOld/* = TRUE*/)
 {
 	HRESULT hr = E_FAIL;
 
@@ -150,14 +153,76 @@ HRESULT CFileClusterTag::RemoveTag(LPCWSTR wsFileTag, LPCWSTR wsFileNoTag, BOOL 
 		ULONGLONG ullen = 0;
 		fSrc.GetSize(ullen);
 
+		int nBlockSize = 4 * 1024;
+		int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 		CAtlFile fDst;
-		hr = fDst.Create(wsFileNoTag, GENERIC_WRITE, 0, CREATE_ALWAYS);
-		if (FAILED(hr))
-			break;
 
 #define CACHE_SIZE_MAX_SIZE		64 * 1024 * 1024
 		int nCacheSize = ullen > CACHE_SIZE_MAX_SIZE ? CACHE_SIZE_MAX_SIZE : ullen;		// 64KB读写，性能最佳
-		
+		char *bfCache = new char[nCacheSize];		CAutoPtr<char> _auto_free1(bfCache);
+		memset(bfCache, 0, nCacheSize);
+
+		BOOL bFirst = TRUE;
+		while (1)
+		{
+			DWORD dwBytesRead = 0;
+			hr = fSrc.Read(bfCache, nCacheSize, dwBytesRead);
+			if (FAILED(hr) || dwBytesRead == 0)
+				break;
+
+			if (bFirst)
+			{
+				// 取第一个块的内容
+				bFirst = FALSE;
+				PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
+
+				// 校验数据块
+				if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+					break;
+				if (memcmp(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+					break;
+				if (pBlock->version != 1)
+					break;
+				if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
+					break;
+
+				PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
+				if (pInfo->filenamelen == 0)
+					break;
+
+				WCHAR* pFileName = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFileName);
+				memset(pFileName, 0, pInfo->filenamelen + 2);
+				memcpy(pFileName, pInfo->filename, pInfo->filenamelen);
+				
+				hr = fDst.Create(pFileName, GENERIC_WRITE, 0, CREATE_ALWAYS);
+				if (FAILED(hr))
+					break;
+			}
+			else
+			{
+				int nCnt = dwBytesRead / nBlockSize + (dwBytesRead % nBlockSize) == 0 ? 0 : 1;
+
+				for (size_t i = 1; i < nCnt; i++)
+				{
+					PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache + i * nBlockSize);
+
+					// 校验数据块
+					if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+						break;
+					if (memcmp(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+						break;
+					if (pBlock->version != 1)
+						break;
+					if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
+						break;
+
+					if (i == nCnt - 1)
+						fDst.Write(pBlock->buff, dwBytesRead % nBlockSize - SAFEBK_HDR_SIZE);
+					else
+						fDst.Write(pBlock->buff, nBuffSize);
+				}
+			}
+		}
 
 	} while (FALSE);
 
