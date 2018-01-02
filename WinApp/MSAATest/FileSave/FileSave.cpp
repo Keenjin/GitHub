@@ -8,8 +8,8 @@
 int _tmain(int argc, _TCHAR* argv[])
 {
 	CFileClusterTag fileTag;
-	fileTag.AddTag(L"I:\\test1.txt", L"I:\\test1_tag.txt", FALSE);
-	fileTag.RemoveTag(L"I:\\test1_tag.txt", NULL, FALSE);
+	fileTag.AddTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw.png", L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", FALSE);
+	fileTag.RemoveTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", NULL, FALSE);
 	return 0;
 }
 

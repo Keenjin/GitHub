@@ -170,41 +170,15 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 			if (FAILED(hr) || dwBytesRead == 0)
 				break;
 
-			if (bFirst)
+			int nCnt = dwBytesRead / nBlockSize + ((dwBytesRead % nBlockSize) == 0 ? 0 : 1);
+
+			for (size_t i = 0; i < nCnt; i++)
 			{
-				// 取第一个块的内容
-				bFirst = FALSE;
-				PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
-
-				// 校验数据块
-				if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
-					break;
-				if (memcmp(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
-					break;
-				if (pBlock->version != 1)
-					break;
-				if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
-					break;
-
-				PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
-				if (pInfo->filenamelen == 0)
-					break;
-
-				WCHAR* pFileName = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFileName);
-				memset(pFileName, 0, pInfo->filenamelen + 2);
-				memcpy(pFileName, pInfo->filename, pInfo->filenamelen);
-				
-				hr = fDst.Create(pFileName, GENERIC_WRITE, 0, CREATE_ALWAYS);
-				if (FAILED(hr))
-					break;
-			}
-			else
-			{
-				int nCnt = dwBytesRead / nBlockSize + (dwBytesRead % nBlockSize) == 0 ? 0 : 1;
-
-				for (size_t i = 1; i < nCnt; i++)
+				if (bFirst)
 				{
-					PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache + i * nBlockSize);
+					// 取第一个块的内容
+					bFirst = FALSE;
+					PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
 
 					// 校验数据块
 					if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
@@ -213,14 +187,41 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 						break;
 					if (pBlock->version != 1)
 						break;
+					if (pBlock->size > nBlockSize)
+						break;
 					if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
 						break;
 
-					if (i == nCnt - 1)
-						fDst.Write(pBlock->buff, dwBytesRead % nBlockSize - SAFEBK_HDR_SIZE);
-					else
-						fDst.Write(pBlock->buff, nBuffSize);
+					PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
+					if (pInfo->filenamelen == 0)
+						break;
+
+					WCHAR* pFileName = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFileName);
+					memset(pFileName, 0, pInfo->filenamelen + 2);
+					memcpy(pFileName, pInfo->filename, pInfo->filenamelen);
+
+					hr = fDst.Create(pFileName, GENERIC_WRITE, 0, CREATE_ALWAYS);
+					if (FAILED(hr))
+						break;
+
+					continue;
 				}
+
+				PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache + i * nBlockSize);
+
+				// 校验数据块
+				if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+					break;
+				if (memcmp(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
+					break;
+				if (pBlock->version != 1)
+					break;
+				if (pBlock->size > nBlockSize)
+					break;
+				if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
+					break;
+
+				fDst.Write(pBlock->buff, pBlock->size);
 			}
 		}
 
