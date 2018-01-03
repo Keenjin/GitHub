@@ -14,5 +14,9 @@ public:
 
 	// 暴力搜索
 	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd);
+
+public:
+	// 磁盘信息获取
+	
 };
 

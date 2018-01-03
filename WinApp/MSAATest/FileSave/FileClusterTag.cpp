@@ -8,6 +8,7 @@ typedef struct _SAFEBK_BLOCK_HDR
 {
 	GUID _head;
 	uint16_t version;
+	uint32_t clustersize;
 	GUID fileid;
 	uint64_t curr;
 	uint64_t total;
@@ -47,6 +48,17 @@ uint64_t CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock)
 	return crc;
 }
 
+uint32_t GetBytesPerCluster(LPCWSTR wsFilePath)
+{
+	DWORD dwSectorPerCluster, dwBytesPerSector, dwNumOfFreeCluster, dwTotalCluster;
+	WCHAR szRoot[4] = { L"c:\\" };
+	szRoot[0] = *wsFilePath;
+	GetDiskFreeSpace(szRoot, &dwSectorPerCluster, &dwBytesPerSector, &dwNumOfFreeCluster, &dwTotalCluster);
+
+	uint32_t clustersize = (uint32_t)dwSectorPerCluster * (uint32_t)dwBytesPerSector;
+	return clustersize;
+}
+
 
 CFileClusterTag::CFileClusterTag()
 {
@@ -63,7 +75,7 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 
 	do
 	{
-		int nBlockSize = 4 * 1024;
+		int nBlockSize = GetBytesPerCluster(wsFileNoTag);
 		int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 		char *bfBlock = new char[nBlockSize];	CAutoPtr<char> _auto_free1(bfBlock);
 		memset(bfBlock, 0, nBlockSize);
@@ -92,6 +104,8 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 		memcpy(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID_SAFEBK_ID));
 		pBlock->total = 1 + (ullLen / nBuffSize) + (ullLen % nBuffSize ? 1 : 0);
 		pBlock->curr = 0;
+		pBlock->clustersize = nBlockSize;
+		
 
 		PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
 		time(&pInfo->bktime);
@@ -153,12 +167,14 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 		ULONGLONG ullen = 0;
 		fSrc.GetSize(ullen);
 
-		int nBlockSize = 4 * 1024;
+		int nBlockSize = GetBytesPerCluster(wsFileTag);
 		int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 		CAtlFile fDst;
 
-#define CACHE_SIZE_MAX_SIZE		64 * 1024 * 1024
-		int nCacheSize = ullen > CACHE_SIZE_MAX_SIZE ? CACHE_SIZE_MAX_SIZE : ullen;		// 64KB读写，性能最佳
+		int nCacheMaxSize = 64 * 1024;
+		if (nCacheMaxSize < nBlockSize)
+			nCacheMaxSize = nBlockSize;
+		int nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;		// 64KB读写，性能最佳
 		char *bfCache = new char[nCacheSize];		CAutoPtr<char> _auto_free1(bfCache);
 		memset(bfCache, 0, nCacheSize);
 
