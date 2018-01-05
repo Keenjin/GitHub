@@ -153,7 +153,7 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 	return hr;
 }
 
-HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNoTag, __in BOOL bDelOld/* = TRUE*/)
+HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNewDir/* = NULL*/, __inout LPWSTR wsFileSrc/* = NULL*/, __in DWORD dwBufBytes/* = 0*/, __in BOOL bDelOld/* = TRUE*/)
 {
 	HRESULT hr = E_FAIL;
 
@@ -167,7 +167,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 		ULONGLONG ullen = 0;
 		fSrc.GetSize(ullen);
 
-		int nBlockSize = GetBytesPerCluster(wsFileTag);
+		int nBlockSize = GetBytesPerCluster(wsFileTag);;		// 先假设簇大小是平台大小
 		int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 		CAtlFile fDst;
 
@@ -179,12 +179,37 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 		memset(bfCache, 0, nCacheSize);
 
 		BOOL bFirst = TRUE;
+		BOOL bCheckClusterSize = FALSE;
 		while (1)
 		{
 			DWORD dwBytesRead = 0;
 			hr = fSrc.Read(bfCache, nCacheSize, dwBytesRead);
 			if (FAILED(hr) || dwBytesRead == 0)
 				break;
+
+			PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
+
+			// 先确认下，簇大小是否是正确的，不是的话，打回重新来，并且更正簇大小
+			if (!bCheckClusterSize)
+			{
+				bCheckClusterSize = TRUE;
+				if (pBlock->clustersize != nBlockSize)
+				{
+					nBlockSize = pBlock->clustersize;
+					nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
+
+					if (nCacheMaxSize < nBlockSize)
+					{
+						nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;
+						bfCache = new char[nCacheSize];
+						_auto_free1.Attach(bfCache);
+						memset(bfCache, 0, nCacheSize);
+					}
+
+					fSrc.Seek(0, FILE_BEGIN);
+					continue;
+				}
+			}
 
 			int nCnt = dwBytesRead / nBlockSize + ((dwBytesRead % nBlockSize) == 0 ? 0 : 1);
 
@@ -194,7 +219,6 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 				{
 					// 取第一个块的内容
 					bFirst = FALSE;
-					PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
 
 					// 校验数据块
 					if (memcmp(&pBlock->_head, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
@@ -212,11 +236,28 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __out LPWSTR wsFileNo
 					if (pInfo->filenamelen == 0)
 						break;
 
-					WCHAR* pFileName = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFileName);
-					memset(pFileName, 0, pInfo->filenamelen + 2);
-					memcpy(pFileName, pInfo->filename, pInfo->filenamelen);
+					WCHAR* pFilePath = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFilePath);
+					memset(pFilePath, 0, pInfo->filenamelen + 2);
+					memcpy(pFilePath, pInfo->filename, pInfo->filenamelen);
 
-					hr = fDst.Create(pFileName, GENERIC_WRITE, 0, CREATE_ALWAYS);
+					if (wsFileSrc && dwBufBytes > pInfo->filenamelen)
+					{
+						memcpy(wsFileSrc, pInfo->filename, pInfo->filenamelen);
+					}
+
+					WCHAR fileNewPath[1024] = { 0 };
+
+					if (wsFileNewDir)
+					{
+						// 存储到新目录下
+						WCHAR fileName[256] = { 0 };
+						wcscpy(fileName, PathFindFileName(pFilePath));
+						wsprintf(fileNewPath, L"%s%s", wsFileNewDir, fileName);
+
+						pFilePath = fileNewPath;
+					}
+
+					hr = fDst.Create(pFilePath, GENERIC_WRITE, 0, CREATE_ALWAYS);
 					if (FAILED(hr))
 						break;
 
