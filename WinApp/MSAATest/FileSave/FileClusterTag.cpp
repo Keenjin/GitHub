@@ -4,38 +4,57 @@
 #include <atlfile.h>
 
 #pragma pack(push, 1)
-typedef struct _SAFEBK_BLOCK_HDR
-{
-	GUID _head;
-	uint16_t version;
-	uint32_t clustersize;
-	GUID fileid;
-	uint64_t curr;
-	uint64_t total;
-	uint16_t size;
-	uint64_t crc;
-	GUID _tail;
-
-	uint8_t buff[1];
-
-} SAFEBK_BLOCK_HDR, *PSAFEBK_BLOCK_HDR;
-#define SAFEBK_HDR_SIZE (SIZE_T)(sizeof(SAFEBK_BLOCK_HDR) - sizeof(((PSAFEBK_BLOCK_HDR)0)->buff))
-
-#define SAFEBK_VERSION_001	1
-
-static const GUID GUID_SAFEBK_ID = { 0x1a90e7c9, 0x4b3a, 0x49a8, { 0xae, 0xa0, 0xe1, 0xd4, 0x8a, 0x25, 0x66, 0xab } };
-
-
-typedef struct _SAFEBK_FIRST_BLOCK
-{
-	time_t bktime;
-	uint64_t filesize;
-	uint16_t filenamelen;
-	WCHAR filename[1];
-} SAFEBK_FIRST_BLOCK, *PSAFEBK_FIRST_BLOCK;
+static const GUID GUID_SAFEBK_ID = { 0x1a90e7c9, 0x4b3a, 0x49a8,{ 0xae, 0xa0, 0xe1, 0xd4, 0x8a, 0x25, 0x66, 0xab } };
 #pragma pack(pop)
 
-uint64_t CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock)
+CFileClusterRejust::CFileClusterRejust(ULONGLONG llScanBegin, ULONGLONG llScanEnd)
+	: m_ullScanBegin(llScanBegin)
+	, m_ullScanEnd(llScanEnd)
+{
+
+}
+
+CFileClusterRejust::~CFileClusterRejust()
+{
+
+}
+
+void CFileClusterRejust::AddCluster(PSAFEBK_BLOCK_HDR pBlock, ULONGLONG ullCurrOffset)
+{
+	if (pBlock == NULL)
+	{
+		return;
+	}
+
+	BOOL bFirstBlock = (pBlock->curr == 0);
+	CAtlString strFile;
+	std::map<GUID, CAtlString>::iterator itor = m_mapFile.find(pBlock->fileid);
+	if (itor == m_mapFile.end())
+	{
+		// 查看是否第一个块，第一个块存储了文件路径信息，如果没有，则存储一个以fileid+文件类型为路径的
+		if (bFirstBlock)
+		{
+			// 直接获取原始名称
+		}
+		else
+		{
+			// 取fileid为名称
+		}
+		strFile = GetFilePath(pBlock);
+		m_mapFile.insert(std::pair<GUID, CAtlString>(pBlock->fileid, strFile));
+	}
+	else
+	{
+		strFile = itor->second;
+	}
+
+	// 打开文件，往后面写数据
+	CAtlFile file;
+	file.Create(strFile, GENERIC_WRITE, 0, CREATE_ALWAYS);
+	file.Seek(0, FILE_END);
+}
+
+uint64_t CFileClusterTag::CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock)
 {
 	uint64_t tmp = pBlock->crc;
 
@@ -48,7 +67,7 @@ uint64_t CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock)
 	return crc;
 }
 
-uint32_t GetBytesPerCluster(LPCWSTR wsFilePath)
+uint32_t CFileClusterTag::GetBytesPerCluster(LPCWSTR wsFilePath)
 {
 	DWORD dwSectorPerCluster, dwBytesPerSector, dwNumOfFreeCluster, dwTotalCluster;
 	WCHAR szRoot[4] = { L"c:\\" };
@@ -291,14 +310,16 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 {
 	HRESULT hr;
 
+	CFileClusterRejust	oCluster(llScanBegin, llScanEnd);
+
 	WCHAR wsTmp[100];
 
-	int nBlockSize = 4 * 1024;
+	int nBlockSize = 4 * 1024;		// 就认为当前就是4k大小的簇，从而去取真实的簇大小（这里如果是界面的话，可以尝试多搜索几项）
 	int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 	char *bfBlock = new char[nBlockSize];	CAutoPtr<char> _auto_free1(bfBlock);
 	memset(bfBlock, 0, nBlockSize);
 
-	int nCacheBuffSize = 10 * 1024 * 1024;
+	int nCacheBuffSize = 64 * 1024 * 1024;
 	char *bfCache = new char[nCacheBuffSize];	CAutoPtr<char> _auto_free2(bfCache);
 	memset(bfCache, 0, nCacheBuffSize);
 
@@ -311,13 +332,14 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 	if (FAILED(hr))
 		return hr;
 
-	for (ULONGLONG ullPos = llScanBegin; ullPos < llScanEnd; ullPos += nCacheBuffSize)
+	for (ULONGLONG ullPos = llScanBegin; ullPos < llScanEnd; )
 	{
 		DWORD dwReads = 0;
 		hr = f.Read(bfCache, nCacheBuffSize, dwReads);
 		if (FAILED(hr) || dwReads == 0)
 			break;
 
+		BOOL bAdjustCluster = FALSE;
 		int nCnt = dwReads / 512;
 		for (int j = 0; j < nCnt; j++)
 		{
@@ -329,6 +351,30 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 				continue;
 			if (memcmp(&pBlock->_tail, &GUID_SAFEBK_ID, sizeof(GUID)) != 0)
 				continue;
+
+			// 确实是找到对的了，那么看一下簇大小是否满足
+			if (!bAdjustCluster && (pBlock->clustersize != nBlockSize))
+			{
+				bAdjustCluster = TRUE;
+				f.Seek(ullCurrOffset, FILE_BEGIN);
+
+				// 调整簇大小
+				nBlockSize = pBlock->clustersize;
+				nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
+				bfBlock = new char[nBlockSize];
+				memset(bfBlock, 0, nBlockSize);
+				_auto_free1.Attach(bfBlock);
+
+				// 调整cache大小
+				if (nBlockSize > nCacheBuffSize)
+				{
+					nCacheBuffSize = nBlockSize;
+					bfCache = new char[nCacheBuffSize];
+					_auto_free2.Attach(bfCache);
+					memset(bfCache, 0, nCacheBuffSize);
+				}
+				break;
+			}
 
 			if (nCacheSize < nBlockSize)
 			{
@@ -347,8 +393,16 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 			if (pBlock->crc != CalcBlockCRC(pBlock, nBlockSize))
 				continue;
 
+			// 找到了文件id，需要插入到map中，以便继续找到下一个fileid，存储到对应文件里面去
+			oCluster.AddCluster(pBlock, ullCurrOffset);
+
 			StringFromGUID2(pBlock->fileid, wsTmp, _countof(wsTmp));
 			wprintf(L"block pos: %p, fid: %s, curr: %lld, total: %lld, size: %d\n", ullCurrOffset, wsTmp, pBlock->curr, pBlock->total, pBlock->size);
+		}
+
+		if (!bAdjustCluster)
+		{
+			ullPos += nCacheBuffSize;
 		}
 	}
 
