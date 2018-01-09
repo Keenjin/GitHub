@@ -12,8 +12,9 @@ int _tmain(int argc, _TCHAR* argv[])
 {
 	std::wcout.imbue(std::locale("chs"));
 
-	//fileTag.AddTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw.png", L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", FALSE);
-	std::cout << "输入范例：" << std::endl;
+	CFileClusterTag fileTag;
+	fileTag.AddTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw.png", L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", FALSE);
+	/*std::cout << "输入范例：" << std::endl;
 	WCHAR szExePath[1024] = { 0 };
 	GetModuleFileName(NULL, szExePath, 1023);
 	ATL::CAtlString strOutput;
@@ -57,7 +58,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	strFileOld.ReleaseBuffer();
 
 	std::wcout << L"操作结束" << std::endl;
-	std::wcout << L"原始文件名：" << std::wstring(strFileOld.GetString()).c_str() << std::endl;
+	std::wcout << L"原始文件名：" << std::wstring(strFileOld.GetString()).c_str() << std::endl;*/
 
 	return 0;
 }

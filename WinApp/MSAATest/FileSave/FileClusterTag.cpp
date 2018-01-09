@@ -14,6 +14,7 @@ typedef struct _SAFEBK_BLOCK_HDR
 	uint64_t total;
 	uint16_t size;
 	uint64_t crc;
+	char filetype[16];
 	GUID _tail;
 
 	uint8_t buff[1];
@@ -57,6 +58,20 @@ uint32_t GetBytesPerCluster(LPCWSTR wsFilePath)
 
 	uint32_t clustersize = (uint32_t)dwSectorPerCluster * (uint32_t)dwBytesPerSector;
 	return clustersize;
+}
+
+void CFileClusterTag::GetFileExtension(LPCWSTR wsFileNoTag, char* wsFileType, int nFileTypeBufferSize)
+{
+	CAtlString strFileNoTag = wsFileNoTag;
+	int nPos = strFileNoTag.ReverseFind(L'.');
+	if (nPos != -1)
+	{
+		CAtlStringA strFileType = CW2A(strFileNoTag.Mid(nPos), CP_UTF8);
+		if (!strFileType.IsEmpty())
+		{
+			memcpy(wsFileType, strFileType, strFileType.GetLength() > nFileTypeBufferSize ? nFileTypeBufferSize : strFileType.GetLength());
+		}
+	}
 }
 
 
@@ -105,6 +120,7 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 		pBlock->total = 1 + (ullLen / nBuffSize) + (ullLen % nBuffSize ? 1 : 0);
 		pBlock->curr = 0;
 		pBlock->clustersize = nBlockSize;
+		GetFileExtension(wsFileNoTag, pBlock->filetype, sizeof(pBlock->filetype));
 		
 
 		PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
@@ -293,7 +309,7 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 
 	WCHAR wsTmp[100];
 
-	int nBlockSize = 4 * 1024;
+	int nBlockSize = GetBytesPerCluster(wsDevName);
 	int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
 	char *bfBlock = new char[nBlockSize];	CAutoPtr<char> _auto_free1(bfBlock);
 	memset(bfBlock, 0, nBlockSize);

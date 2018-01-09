@@ -17,6 +17,6 @@ public:
 
 public:
 	// 磁盘信息获取
-	
+	void GetFileExtension(LPCWSTR wsFileNoTag, char* wsFileType, int nFileTypeBufferSize);
 };
 
