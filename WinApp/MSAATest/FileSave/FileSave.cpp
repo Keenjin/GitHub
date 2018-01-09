@@ -13,7 +13,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::wcout.imbue(std::locale("chs"));
 
 	CFileClusterTag fileTag;
-	fileTag.AddTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw.png", L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", FALSE);
+	std::vector<CAtlString> vecDisk;
+	fileTag.EnumDiskDevice(vecDisk);
+	//fileTag.AddTag(L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw.png", L"I:\\HCI-防敲诈文档备份保护方案-Luxozhang-201703281739.fw_tag.png", FALSE);
+	//fileTag.DiskRestore();
 	/*std::cout << "输入范例：" << std::endl;
 	WCHAR szExePath[1024] = { 0 };
 	GetModuleFileName(NULL, szExePath, 1023);

@@ -2,14 +2,17 @@
 #include "FileClusterTag.h"
 #include <time.h>
 #include <atlfile.h>
+#include <setupapi.h>
 
 #pragma pack(push, 1)
 static const GUID GUID_SAFEBK_ID = { 0x1a90e7c9, 0x4b3a, 0x49a8,{ 0xae, 0xa0, 0xe1, 0xd4, 0x8a, 0x25, 0x66, 0xab } };
 #pragma pack(pop)
 
-CFileClusterRejust::CFileClusterRejust(ULONGLONG llScanBegin, ULONGLONG llScanEnd)
-	: m_ullScanBegin(llScanBegin)
+CFileClusterRejust::CFileClusterRejust(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd)
+	: m_strDevName(wsDevName)
+	, m_ullScanBegin(llScanBegin)
 	, m_ullScanEnd(llScanEnd)
+	, m_uClusterSize(0)
 {
 
 }
@@ -26,32 +29,170 @@ void CFileClusterRejust::AddCluster(PSAFEBK_BLOCK_HDR pBlock, ULONGLONG ullCurrO
 		return;
 	}
 
-	BOOL bFirstBlock = (pBlock->curr == 0);
-	CAtlString strFile;
-	std::map<GUID, CAtlString>::iterator itor = m_mapFile.find(pBlock->fileid);
-	if (itor == m_mapFile.end())
+	WCHAR wsTmp[100] = {0};
+	StringFromGUID2(pBlock->fileid, wsTmp, _countof(wsTmp));
+
+	m_uClusterSize = pBlock->clustersize;
+
+	std::map<GUID, std::list<std::pair<uint64_t, ULONGLONG>>>::iterator itor = m_mapFileCluster.find(pBlock->fileid);
+	if (itor == m_mapFileCluster.end())
 	{
-		// 查看是否第一个块，第一个块存储了文件路径信息，如果没有，则存储一个以fileid+文件类型为路径的
-		if (bFirstBlock)
-		{
-			// 直接获取原始名称
-		}
-		else
-		{
-			// 取fileid为名称
-		}
-		strFile = GetFilePath(pBlock);
-		m_mapFile.insert(std::pair<GUID, CAtlString>(pBlock->fileid, strFile));
+		std::list<std::pair<uint64_t, ULONGLONG>> listFileCluster;
+		listFileCluster.push_back(std::pair<uint64_t, ULONGLONG>(pBlock->curr, ullCurrOffset));
+		m_mapFileCluster.insert(std::pair<GUID, std::list<std::pair<uint64_t, ULONGLONG>>>(pBlock->fileid, listFileCluster));
 	}
 	else
 	{
-		strFile = itor->second;
+		itor->second.push_back(std::pair<uint64_t, ULONGLONG>(pBlock->curr, ullCurrOffset));
 	}
 
-	// 打开文件，往后面写数据
-	CAtlFile file;
-	file.Create(strFile, GENERIC_WRITE, 0, CREATE_ALWAYS);
-	file.Seek(0, FILE_END);
+	CAtlString strFileType = CA2W(pBlock->filetype, CP_UTF8);
+	CAtlString strFilePath = wsTmp;
+	strFilePath += strFileType;
+
+	std::map<GUID, FILEINFO>::iterator itor1 = m_mapFileInfo.find(pBlock->fileid);
+	if (itor1 == m_mapFileInfo.end())
+	{
+		FILEINFO fileinfo;
+		fileinfo.uClusterTotalCnt = pBlock->total;
+		fileinfo.uCurClusterCnt = 1;
+		fileinfo.strFileExt = strFileType;
+
+		if (pBlock->curr == 0)
+		{
+			fileinfo.bGetFirstBlock = TRUE;
+			// 第一个块，尝试去找文件名
+			PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
+			if (pInfo)
+			{
+				fileinfo.uBkTime = pInfo->bktime;
+				fileinfo.uFileSize = pInfo->filesize;
+
+				CAtlString strFilePathTmp = pInfo->filename;
+				if (!strFileType.IsEmpty() &&
+					!strFilePathTmp.IsEmpty() &&
+					strFilePathTmp.Right(strFileType.GetLength()).CompareNoCase(strFileType) != 0)
+				{
+					strFilePathTmp += strFileType;
+					strFilePath = strFilePathTmp;
+				}
+			}
+		}
+
+		fileinfo.strFilePath = strFilePath;
+		fileinfo.strFileName = strFilePath;
+		PathStripPath(fileinfo.strFileName.GetBuffer());
+		fileinfo.strFileName.ReleaseBuffer();
+
+		m_mapFileInfo.insert(std::pair<GUID, FILEINFO>(pBlock->fileid, fileinfo));
+	}
+	else if (!itor1->second.bGetFirstBlock)
+	{
+		itor1->second.uClusterTotalCnt = pBlock->total;
+		itor1->second.uCurClusterCnt++;
+		itor1->second.strFileExt = strFileType;
+		if (pBlock->curr == 0)
+		{
+			itor1->second.bGetFirstBlock = TRUE;
+			// 第一个块，尝试去找文件名
+			PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
+			if (pInfo)
+			{
+				itor1->second.uBkTime = pInfo->bktime;
+				itor1->second.uFileSize = pInfo->filesize;
+
+				CAtlString strFilePathTmp = pInfo->filename;
+				if (!strFileType.IsEmpty() &&
+					!strFilePathTmp.IsEmpty() &&
+					strFilePathTmp.Right(strFileType.GetLength()).CompareNoCase(strFileType) != 0)
+				{
+					strFilePathTmp += strFileType;
+					strFilePath = strFilePathTmp;
+					itor1->second.strFilePath = strFilePath;
+
+					itor1->second.strFileName = strFilePath;
+					PathStripPath(itor1->second.strFileName.GetBuffer());
+					itor1->second.strFileName.ReleaseBuffer();
+				}
+			}
+		}
+	}
+}
+
+// comparison, not case sensitive.
+bool SortCluster(const std::pair<uint64_t, ULONGLONG>& first, const std::pair<uint64_t, ULONGLONG>& second)
+{
+	return first.first < second.first;
+}
+
+// 通过文件簇，生成文件
+BOOL CFileClusterRejust::BuildFiles(LPCWSTR wsNewDir)
+{
+	if (wsNewDir == NULL)
+	{
+		return FALSE;
+	}
+
+	if (!ATLPath::FileExists(wsNewDir))
+	{
+		CreateDirectory(wsNewDir, NULL);
+	}
+
+	// 首先针对已经获取到的文件簇，根据索引进行排序
+	// 然后针对文件簇，进行相邻合并（后期优化考虑）
+	// 最后依次打开文件簇，进行写入
+	CAtlFile f;
+	HRESULT hr = f.Create(m_strDevName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS);
+	if (FAILED(hr))
+		return FALSE;
+
+	for (std::map<GUID, std::list<std::pair<uint64_t, ULONGLONG>>>::iterator itor = m_mapFileCluster.begin();
+		itor != m_mapFileCluster.end(); itor++)
+	{
+		itor->second.sort(SortCluster);
+
+		// 读取文件簇
+		CAtlString strFilePath = wsNewDir;
+		if (strFilePath.Right(1) != L'\\' && strFilePath.Right(1) != L'/')
+		{
+			strFilePath += L"\\";
+		}
+		strFilePath += m_mapFileInfo[itor->first].strFileName;
+		CAtlFile file;
+		file.Create(strFilePath, GENERIC_WRITE, 0, CREATE_ALWAYS);
+
+		int nCacheSize = m_uClusterSize;
+		char *bfCache = new char[nCacheSize];		CAutoPtr<char> _auto_free1(bfCache);
+		memset(bfCache, 0, nCacheSize);
+
+		for (std::list<std::pair<uint64_t, ULONGLONG>>::iterator itor1 = itor->second.begin();
+			itor1 != itor->second.end(); itor1++)
+		{
+			f.Seek(itor1->second, FILE_BEGIN);
+			
+			DWORD dwBytesRead = 0;
+			hr = f.Read(bfCache, nCacheSize, dwBytesRead);
+			if (FAILED(hr) || dwBytesRead == 0)
+				break;
+
+			PSAFEBK_BLOCK_HDR pBlock = (PSAFEBK_BLOCK_HDR)(bfCache);
+			if (pBlock && pBlock->curr != 0)
+			{
+				file.Write(pBlock->buff, pBlock->size);
+			}
+		}
+	}
+
+	return TRUE;
+}
+
+void CFileClusterRejust::GetFileList(std::list<FILEINFO>& listFiles)
+{
+	for (std::map<GUID, FILEINFO>::iterator itor = m_mapFileInfo.begin();
+		itor != m_mapFileInfo.end(); itor++)
+	{
+		listFiles.push_back(itor->second);
+	}
 }
 
 uint64_t CFileClusterTag::CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock)
@@ -208,7 +349,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 		int nCacheMaxSize = 64 * 1024;
 		if (nCacheMaxSize < nBlockSize)
 			nCacheMaxSize = nBlockSize;
-		int nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;		// 64KB读写，性能最佳
+		ULONGLONG nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;		// 64KB读写，性能最佳
 		char *bfCache = new char[nCacheSize];		CAutoPtr<char> _auto_free1(bfCache);
 		memset(bfCache, 0, nCacheSize);
 
@@ -321,11 +462,11 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 	return S_OK;
 }
 
-HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd)
+HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir)
 {
 	HRESULT hr;
 
-	CFileClusterRejust	oCluster(llScanBegin, llScanEnd);
+	CFileClusterRejust	oCluster(wsDevName, llScanBegin, llScanEnd);
 
 	WCHAR wsTmp[100];
 
@@ -421,8 +562,49 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 		}
 	}
 
+	oCluster.BuildFiles(wsNewDir);
+	std::list<FILEINFO> listFiles;
+	oCluster.GetFileList(listFiles);
+
 	if (FAILED(hr))
 		return hr;
 	return hr;
 }
 
+void CFileClusterTag::EnumDiskDevice(std::vector<CAtlString>& vecDiskDev)
+{
+	HDEVINFO hDevInfo = NULL;
+	do
+	{
+		hDevInfo = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+		if (hDevInfo == INVALID_HANDLE_VALUE || hDevInfo == NULL)
+		{
+			break;
+		}
+
+		int nIndex = 0;
+		do
+		{
+			SP_DEVINFO_DATA devData;
+			if (!SetupDiEnumDeviceInfo(hDevInfo, nIndex++, &devData))
+			{
+				// 扫描结束了
+				break;
+			}
+
+			TCHAR szBuf[MAX_PATH] = { 0 };
+			DWORD dwReaded = 0;
+			if (!SetupDiGetDeviceInstanceId(hDevInfo, &devData, szBuf, MAX_PATH, &dwReaded))
+			{
+				break;
+			}
+
+		} while (TRUE);
+
+	} while (FALSE);
+	
+	if (hDevInfo != NULL)
+	{
+		SetupDiDestroyDeviceInfoList(hDevInfo);
+	}
+}
