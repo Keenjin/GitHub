@@ -3,6 +3,9 @@
 #include <time.h>
 #include <atlfile.h>
 #include <setupapi.h>
+#include <iostream>
+
+#pragma comment(lib, "Setupapi.lib")
 
 #pragma pack(push, 1)
 static const GUID GUID_SAFEBK_ID = { 0x1a90e7c9, 0x4b3a, 0x49a8,{ 0xae, 0xa0, 0xe1, 0xd4, 0x8a, 0x25, 0x66, 0xab } };
@@ -71,7 +74,7 @@ void CFileClusterRejust::AddCluster(PSAFEBK_BLOCK_HDR pBlock, ULONGLONG ullCurrO
 				CAtlString strFilePathTmp = pInfo->filename;
 				if (!strFileType.IsEmpty() &&
 					!strFilePathTmp.IsEmpty() &&
-					strFilePathTmp.Right(strFileType.GetLength()).CompareNoCase(strFileType) != 0)
+					strFilePathTmp.Right(strFileType.GetLength()).CompareNoCase(strFileType) == 0)
 				{
 					strFilePathTmp += strFileType;
 					strFilePath = strFilePathTmp;
@@ -251,7 +254,7 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 	{
 		int nBlockSize = GetBytesPerCluster(wsFileNoTag);
 		int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
-		char *bfBlock = new char[nBlockSize];	CAutoPtr<char> _auto_free1(bfBlock);
+		char *bfBlock = new char[nBlockSize];	CAutoVectorPtr<char> _auto_free1(bfBlock);
 		memset(bfBlock, 0, nBlockSize);
 
 		CAtlFile fSrc;
@@ -350,7 +353,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 		if (nCacheMaxSize < nBlockSize)
 			nCacheMaxSize = nBlockSize;
 		ULONGLONG nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;		// 64KB读写，性能最佳
-		char *bfCache = new char[nCacheSize];		CAutoPtr<char> _auto_free1(bfCache);
+		char *bfCache = new char[nCacheSize];		CAutoVectorPtr<char> _auto_free1(bfCache);
 		memset(bfCache, 0, nCacheSize);
 
 		BOOL bFirst = TRUE;
@@ -411,7 +414,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 					if (pInfo->filenamelen == 0)
 						break;
 
-					WCHAR* pFilePath = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoPtr<WCHAR> _auto_free2(pFilePath);
+					WCHAR* pFilePath = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoVectorPtr<WCHAR> _auto_free2(pFilePath);
 					memset(pFilePath, 0, pInfo->filenamelen + 2);
 					memcpy(pFilePath, pInfo->filename, pInfo->filenamelen);
 
@@ -472,11 +475,11 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 
 	int nBlockSize = 4 * 1024;		// 就认为当前就是4k大小的簇，从而去取真实的簇大小（这里如果是界面的话，可以尝试多搜索几项）
 	int nBuffSize = nBlockSize - SAFEBK_HDR_SIZE;
-	char *bfBlock = new char[nBlockSize];	CAutoPtr<char> _auto_free1(bfBlock);
+	char *bfBlock = new char[nBlockSize];	CAutoVectorPtr<char> _auto_free1(bfBlock);
 	memset(bfBlock, 0, nBlockSize);
 
 	int nCacheBuffSize = 64 * 1024 * 1024;
-	char *bfCache = new char[nCacheBuffSize];	CAutoPtr<char> _auto_free2(bfCache);
+	char *bfCache = new char[nCacheBuffSize];	CAutoVectorPtr<char> _auto_free2(bfCache);
 	memset(bfCache, 0, nCacheBuffSize);
 
 	CAtlFile f;
@@ -552,8 +555,10 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 			// 找到了文件id，需要插入到map中，以便继续找到下一个fileid，存储到对应文件里面去
 			oCluster.AddCluster(pBlock, ullCurrOffset);
 
-			StringFromGUID2(pBlock->fileid, wsTmp, _countof(wsTmp));
-			wprintf(L"block pos: %p, fid: %s, curr: %lld, total: %lld, size: %d\n", ullCurrOffset, wsTmp, pBlock->curr, pBlock->total, pBlock->size);
+			j += nBlockSize / 512 - 1;
+
+			//StringFromGUID2(pBlock->fileid, wsTmp, _countof(wsTmp));
+			//wprintf(L"block pos: %p, fid: %s, curr: %lld, total: %lld, size: %d\n", ullCurrOffset, wsTmp, pBlock->curr, pBlock->total, pBlock->size);
 		}
 
 		if (!bAdjustCluster)
@@ -571,37 +576,123 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 	return hr;
 }
 
-void CFileClusterTag::EnumDiskDevice(std::vector<CAtlString>& vecDiskDev)
+BOOL CFileClusterTag::GetDeviceNum(const CAtlString& strDevName, STORAGE_DEVICE_NUMBER& devNum)
+{
+	BOOL bRet = FALSE;
+
+	HANDLE hDevice = NULL;
+	do
+	{
+		hDevice = CreateFile(strDevName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS, NULL);
+		if (!hDevice || hDevice == INVALID_HANDLE_VALUE)
+		{
+			break;
+		}
+
+		DWORD dwReaded = 0;
+		if (!DeviceIoControl(hDevice, IOCTL_STORAGE_GET_DEVICE_NUMBER, NULL, 0, &devNum, sizeof(devNum), &dwReaded, NULL))
+		{
+			DWORD dwErr = GetLastError();
+			break;
+		}
+
+		STORAGE_PROPERTY_QUERY query;
+		query.PropertyId = StorageDeviceProperty;
+		query.QueryType = PropertyStandardQuery;
+		STORAGE_DEVICE_DESCRIPTOR devDesc;
+		DeviceIoControl(hDevice, IOCTL_STORAGE_QUERY_PROPERTY, &query, sizeof(query), &devDesc, sizeof(devDesc), &dwReaded, NULL);
+
+		bRet = TRUE;
+
+	} while (FALSE);
+
+	if (hDevice && hDevice != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(hDevice);
+		hDevice = NULL;
+	}
+
+	return bRet;
+}
+
+void CFileClusterTag::EnumDiskDevice(std::vector<DISKINFO>& vecDiskDev)
 {
 	HDEVINFO hDevInfo = NULL;
 	do
 	{
-		hDevInfo = SetupDiGetClassDevs(NULL, NULL, NULL, DIGCF_PRESENT | DIGCF_ALLCLASSES);
+		hDevInfo = SetupDiGetClassDevs(&GUID_DEVINTERFACE_DISK, NULL, NULL, DIGCF_PRESENT | DIGCF_DEVICEINTERFACE);
 		if (hDevInfo == INVALID_HANDLE_VALUE || hDevInfo == NULL)
 		{
 			break;
 		}
 
-		int nIndex = 0;
-		do
+		int nIndex = -1;
+		while (true)
 		{
+			DISKINFO diskInfo;
+
+			nIndex++;
+
+			SP_DEVICE_INTERFACE_DATA devInterfaceData;
+			devInterfaceData.cbSize = sizeof(SP_DEVICE_INTERFACE_DATA);
+			if (!SetupDiEnumDeviceInterfaces(hDevInfo, NULL, &GUID_DEVINTERFACE_DISK, nIndex, &devInterfaceData))
+			{
+				break;
+			}
+
+			DWORD dwRequired = 0;
+			if (!SetupDiGetDeviceInterfaceDetail(hDevInfo, &devInterfaceData, NULL, 0, &dwRequired, NULL) &&
+				GetLastError() != ERROR_INSUFFICIENT_BUFFER &&
+				dwRequired == 0)
+			{
+				break;
+			}
+
+			char* cbBuffer = new char[dwRequired];	CAutoVectorPtr<char> auto_free(cbBuffer);
+			memset(cbBuffer, 0, dwRequired);
+			PSP_DEVICE_INTERFACE_DETAIL_DATA pDevInData = (PSP_DEVICE_INTERFACE_DETAIL_DATA)cbBuffer;
+			pDevInData->cbSize = sizeof(SP_DEVICE_INTERFACE_DETAIL_DATA);
+			if (!SetupDiGetDeviceInterfaceDetail(hDevInfo, &devInterfaceData, pDevInData, dwRequired, &dwRequired, NULL))
+			{
+				break;
+			}
+
+			diskInfo.strDevName = pDevInData->DevicePath;
+			//std::wcout << L"设备名：" << diskInfo.strDevName.GetString() << std::endl;
+
+			STORAGE_DEVICE_NUMBER devNum;
+			if (!GetDeviceNum(diskInfo.strDevName, devNum))
+			{
+				continue;
+			}
+
 			SP_DEVINFO_DATA devData;
-			if (!SetupDiEnumDeviceInfo(hDevInfo, nIndex++, &devData))
+			devData.cbSize = sizeof(SP_DEVINFO_DATA);
+			if (!SetupDiEnumDeviceInfo(hDevInfo, nIndex, &devData))
 			{
-				// 扫描结束了
-				break;
+				int a = GetLastError();
+				continue;
 			}
 
-			TCHAR szBuf[MAX_PATH] = { 0 };
-			DWORD dwReaded = 0;
-			if (!SetupDiGetDeviceInstanceId(hDevInfo, &devData, szBuf, MAX_PATH, &dwReaded))
+			// 根据dwIndex设备句柄请求FRIENDLYNAME访问  
+			WCHAR PropertyBuffer[MAX_PATH] = { 0 };
+			DWORD dwSize = 0;
+			if (SetupDiGetDeviceRegistryProperty(hDevInfo, &devData, SPDRP_FRIENDLYNAME, 0, (PBYTE)PropertyBuffer, MAX_PATH, &dwSize) == FALSE)
 			{
-				break;
+				int a = GetLastError();
+				continue;
 			}
+			
+			std::wcout << PropertyBuffer << std::endl;
 
-		} while (TRUE);
+			diskInfo.dwPhysicNum = devNum.DeviceNumber;
+			vecDiskDev.push_back(diskInfo);
 
+			//std::wcout << L"驱动器：PhysicDrive" << devNum.DeviceNumber << std::endl;
+		}
 	} while (FALSE);
+
+	std::wcout << L"end." << std::endl;
 	
 	if (hDevInfo != NULL)
 	{

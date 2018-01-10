@@ -15,6 +15,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileDiskBlockSave", "FileDi
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileSave", "FileSave\FileSave.vcxproj", "{5663F191-E623-41E5-B85E-B91C095E3051}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "FileRestore", "FileRestore\FileRestore.vcxproj", "{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -61,6 +63,12 @@ Global
 		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|Win32.ActiveCfg = Release|Win32
 		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|Win32.Build.0 = Release|Win32
 		{5663F191-E623-41E5-B85E-B91C095E3051}.Release|x64.ActiveCfg = Release|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Debug|Win32.Build.0 = Debug|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Debug|x64.ActiveCfg = Debug|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Release|Win32.ActiveCfg = Release|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Release|Win32.Build.0 = Release|Win32
+		{7A472DE7-6EAA-458C-9C3F-E866EA7C11C3}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

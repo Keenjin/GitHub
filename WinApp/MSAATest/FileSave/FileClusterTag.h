@@ -57,6 +57,12 @@ typedef struct _FILEINFO
 	{}
 } FILEINFO, *PFILEINFO;
 
+typedef struct _DISKINFO
+{
+	CAtlString strDevName;
+	DWORD	dwPhysicNum;
+}DISKINFO, *PDISKINFO;
+
 class CFileClusterRejust
 {
 	class GUIDComparator
@@ -127,7 +133,8 @@ public:
 	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir);
 
 	// 磁盘信息获取
-	void EnumDiskDevice(std::vector<CAtlString>& vecDiskDev);
+	BOOL GetDeviceNum(const CAtlString& strDevName, STORAGE_DEVICE_NUMBER& devNum);
+	void EnumDiskDevice(std::vector<DISKINFO>& vecDiskDev);
 	void GetFileExtension(LPCWSTR wsFileNoTag, char* wsFileType, int nFileTypeBufferSize);
 	uint64_t CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock);
 	uint32_t GetBytesPerCluster(LPCWSTR wsFilePath);
