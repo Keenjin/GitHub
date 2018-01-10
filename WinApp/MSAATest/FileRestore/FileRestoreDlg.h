@@ -1,32 +1,49 @@
 
-// FileRestoreDlg.h : 头文件
+// FileRestoreDlg.h : header file
 //
 
 #pragma once
+#include "afxcmn.h"
+#include "PageBasic.h"
+
+enum ETabIndex
+{
+	TAB_INDEX_GENERAL = 0,
+
+	TAB_INDEX_ABOUT
+};
 
 
-// CFileRestoreDlg 对话框
+
+// CFileRestoreDlg dialog
 class CFileRestoreDlg : public CDialog
 {
-// 构造
+// Construction
 public:
-	CFileRestoreDlg(CWnd* pParent = NULL);	// 标准构造函数
+	CFileRestoreDlg(CWnd* pParent = NULL);	// standard constructor
 
-// 对话框数据
+// Dialog Data
+#ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_FILERESTORE_DIALOG };
+#endif
 
 	protected:
-	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV 支持
+	virtual void DoDataExchange(CDataExchange* pDX);	// DDX/DDV support
 
 
-// 实现
+// Implementation
 protected:
 	HICON m_hIcon;
 
-	// 生成的消息映射函数
+	// Generated message map functions
 	virtual BOOL OnInitDialog();
 	afx_msg void OnSysCommand(UINT nID, LPARAM lParam);
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+public:
+	CTabCtrl m_tabMain;
+	afx_msg void OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult);
+
+	CPageBasic	m_pageBasic;
 };

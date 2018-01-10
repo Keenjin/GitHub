@@ -1,60 +1,125 @@
-﻿================================================================================
-    MICROSOFT 基础类库 : FileRestore 项目概述
+================================================================================
+    MICROSOFT FOUNDATION CLASS LIBRARY : FileRestore Project Overview
 ===============================================================================
 
-应用程序向导已为您创建了此 FileRestore 应用程序。此应用程序不仅演示 Microsoft 基础类的基本使用方法，还可作为您编写应用程序的起点。
+The application wizard has created this FileRestore application for
+you.  This application not only demonstrates the basics of using the Microsoft
+Foundation Classes but is also a starting point for writing your application.
 
-本文件概要介绍组成 FileRestore 应用程序的每个文件的内容。
+This file contains a summary of what you will find in each of the files that
+make up your FileRestore application.
 
 FileRestore.vcxproj
-    这是使用应用程序向导生成的 VC++ 项目的主项目文件，其中包含生成该文件的 Visual C++ 的版本信息，以及有关使用应用程序向导选择的平台、配置和项目功能的信息。
+    This is the main project file for VC++ projects generated using an application wizard.
+    It contains information about the version of Visual C++ that generated the file, and
+    information about the platforms, configurations, and project features selected with the
+    application wizard.
 
 FileRestore.vcxproj.filters
-    这是使用“应用程序向导”生成的 VC++ 项目筛选器文件。它包含有关项目文件与筛选器之间的关联信息。在 IDE 中，通过这种关联，在特定节点下以分组形式显示具有相似扩展名的文件。例如，“.cpp”文件与“源文件”筛选器关联。
+    This is the filters file for VC++ projects generated using an Application Wizard. 
+    It contains information about the assciation between the files in your project 
+    and the filters. This association is used in the IDE to show grouping of files with
+    similar extensions under a specific node (for e.g. ".cpp" files are associated with the
+    "Source Files" filter).
 
 FileRestore.h
-    这是应用程序的主头文件。
-    其中包括其他项目特定的标头（包括 Resource.h），并声明 CFileRestoreApp 应用程序类。
+    This is the main header file for the application.  It includes other
+    project specific headers (including Resource.h) and declares the
+    CFileRestoreApp application class.
 
 FileRestore.cpp
-    这是包含应用程序类 CFileRestoreApp 的主应用程序源文件。
+    This is the main application source file that contains the application
+    class CFileRestoreApp.
 
 FileRestore.rc
-    这是程序使用的所有 Microsoft Windows 资源的列表。它包括 RES 子目录中存储的图标、位图和光标。此文件可以直接在 Microsoft Visual C++ 中进行编辑。项目资源包含在 2052 中。
+    This is a listing of all of the Microsoft Windows resources that the
+    program uses.  It includes the icons, bitmaps, and cursors that are stored
+    in the RES subdirectory.  This file can be directly edited in Microsoft
+    Visual C++. Your project resources are in 1033.
 
 res\FileRestore.ico
-    这是用作应用程序图标的图标文件。此图标包括在主资源文件 FileRestore.rc 中。
+    This is an icon file, which is used as the application's icon.  This
+    icon is included by the main resource file FileRestore.rc.
 
 res\FileRestore.rc2
-    此文件包含不在 Microsoft Visual C++ 中进行编辑的资源。您应该将不可由资源编辑器编辑的所有资源放在此文件中。
+    This file contains resources that are not edited by Microsoft
+    Visual C++. You should place all resources not editable by
+    the resource editor in this file.
 
 
 /////////////////////////////////////////////////////////////////////////////
 
-应用程序向导创建一个对话框类：
+The application wizard creates one dialog class:
 
-FileRestoreDlg.h、FileRestoreDlg.cpp - 对话框
-    这些文件包含 CFileRestoreDlg 类。此类定义应用程序的主对话框的行为。对话框模板包含在 FileRestore.rc 中，该文件可以在 Microsoft Visual C++ 中编辑。
+FileRestoreDlg.h, FileRestoreDlg.cpp - the dialog
+    These files contain your CFileRestoreDlg class.  This class defines
+    the behavior of your application's main dialog.  The dialog's template is
+    in FileRestore.rc, which can be edited in Microsoft Visual C++.
 
 /////////////////////////////////////////////////////////////////////////////
 
-其他标准文件:
+Help Support:
+
+hlp\FileRestore.hhp
+    This file is a help project file. It contains the data needed to
+    compile the help files into a .chm file.
+
+hlp\FileRestore.hhc
+    This file lists the contents of the help project.
+
+hlp\FileRestore.hhk
+    This file contains an index of the help topics.
+
+hlp\afxcore.htm
+    This file contains the standard help topics for standard MFC
+    commands and screen objects. Add your own help topics to this file.
+
+makehtmlhelp.bat
+    This file is used by the build system to compile the help files.
+
+hlp\Images\*.gif
+    These are bitmap files required by the standard help file topics for
+    Microsoft Foundation Class Library standard commands.
+
+
+/////////////////////////////////////////////////////////////////////////////
+
+Other Features:
+
+ActiveX Controls
+    The application includes support to use ActiveX controls.
+
+/////////////////////////////////////////////////////////////////////////////
+
+Other standard files:
 
 StdAfx.h, StdAfx.cpp
-    这些文件用于生成名为 FileRestore.pch 的预编译头 (PCH) 文件和名为 StdAfx.obj 的预编译类型文件。
+    These files are used to build a precompiled header (PCH) file
+    named FileRestore.pch and a precompiled types file named StdAfx.obj.
 
 Resource.h
-    这是标准头文件，可用于定义新的资源 ID。Microsoft Visual C++ 将读取并更新此文件。
+    This is the standard header file, which defines new resource IDs.
+    Microsoft Visual C++ reads and updates this file.
 
 FileRestore.manifest
-	Windows XP 使用应用程序清单文件来描述特定版本的并行程序集的应用程序依赖项。加载程序使用这些信息来从程序集缓存中加载相应的程序集，并保护其不被应用程序访问。应用程序清单可能会包含在内，以作为与应用程序可执行文件安装在同一文件夹中的外部 .manifest 文件进行重新分发，它还可能以资源的形式包含在可执行文件中。
+	Application manifest files are used by Windows XP to describe an applications
+	dependency on specific versions of Side-by-Side assemblies. The loader uses this
+	information to load the appropriate assembly from the assembly cache or private
+	from the application. The Application manifest  maybe included for redistribution
+	as an external .manifest file that is installed in the same folder as the application
+	executable or it may be included in the executable in the form of a resource.
 /////////////////////////////////////////////////////////////////////////////
 
-其他注释:
+Other notes:
 
-应用程序向导使用“TODO:”来指示应添加或自定义的源代码部分。
+The application wizard uses "TODO:" to indicate parts of the source code you
+should add to or customize.
 
-如果应用程序使用共享 DLL 中的 MFC，您将需要重新分发 MFC DLL。如果应用程序所使用的语言与操作系统的区域设置不同，则还需要重新分发相应的本地化资源 mfc110XXX.DLL。
-有关上述话题的更多信息，请参见 MSDN 文档中有关重新分发 Visual C++ 应用程序的部分。
+If your application uses MFC in a shared DLL, you will need
+to redistribute the MFC DLLs. If your application is in a language
+other than the operating system's locale, you will also have to
+redistribute the corresponding localized resources MFC100XXX.DLL.
+For more information on both of these topics, please see the section on
+redistributing Visual C++ applications in MSDN documentation.
 
 /////////////////////////////////////////////////////////////////////////////
