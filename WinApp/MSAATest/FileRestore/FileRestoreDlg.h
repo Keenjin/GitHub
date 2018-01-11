@@ -5,6 +5,7 @@
 #pragma once
 #include "afxcmn.h"
 #include "PageBasic.h"
+#include "PageAbout.h"
 
 enum ETabIndex
 {
@@ -41,9 +42,17 @@ protected:
 	afx_msg void OnPaint();
 	afx_msg HCURSOR OnQueryDragIcon();
 	DECLARE_MESSAGE_MAP()
+
+private:
+	BOOL ShowPage(ETabIndex eIndex);
+
 public:
 	CTabCtrl m_tabMain;
 	afx_msg void OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult);
 
 	CPageBasic	m_pageBasic;
+	CPageAbout	m_pageAbout;
+
+
+	afx_msg void OnClose();
 };

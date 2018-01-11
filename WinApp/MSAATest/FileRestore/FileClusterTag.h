@@ -5,6 +5,16 @@
 #include <algorithm>
 #include <atlpath.h>
 #include <vector>
+#include <WinIoCtl.h>
+
+class IFileClusterCallback
+{
+public:
+	virtual LRESULT OnProgressStart(ULONGLONG ullTotal) = 0;
+	virtual LRESULT OnProgressIncrement(ULONGLONG ullCurrent) = 0;
+	virtual LRESULT OnProgressEnd() = 0;
+};
+
 
 #pragma pack(push, 1)
 typedef struct _SAFEBK_BLOCK_HDR
@@ -62,6 +72,7 @@ typedef struct _DISKINFO
 	CAtlString strDevName;
 	CAtlString strFriendName;
 	DWORD	dwPhysicNum;
+	ULONGLONG ullDiskSize;
 }DISKINFO, *PDISKINFO;
 
 class CFileClusterRejust
@@ -131,11 +142,13 @@ public:
 	HRESULT RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNewDir = NULL, __inout LPWSTR wsFileSrc = NULL, __in DWORD dwBufBytes = 0, __in BOOL bDelOld = TRUE);
 
 	// 暴力搜索
-	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir);
+	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, IFileClusterCallback* pCallback = NULL);
 
 	// 磁盘信息获取
 	BOOL GetDeviceNum(const CAtlString& strDevName, STORAGE_DEVICE_NUMBER& devNum);
 	void EnumDiskDevice(std::vector<DISKINFO>& vecDiskDev);
+	BOOL GetDriveGeometry(int nDriverNum, DISK_GEOMETRY& dg);
+
 	void GetFileExtension(LPCWSTR wsFileNoTag, char* wsFileType, int nFileTypeBufferSize);
 	uint64_t CalcBlockCRC(PSAFEBK_BLOCK_HDR pBlock, int nBlock);
 	uint32_t GetBytesPerCluster(LPCWSTR wsFilePath);

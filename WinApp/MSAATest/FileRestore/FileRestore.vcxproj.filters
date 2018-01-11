@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{34f6e25e-b2ee-4eb1-93e9-63d0ccaaaf2c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -36,6 +39,27 @@
     <ClInclude Include="PageBasic.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="PageAbout.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="FileClusterTag.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="AutoCriticalSection.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Event.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskContainer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="TaskPool.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Thread.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="FileRestore.cpp">
@@ -49,6 +73,15 @@
     </ClCompile>
     <ClCompile Include="PageBasic.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="PageAbout.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="FileClusterTag.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Thread.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -70,6 +70,22 @@ DWORD CThread::Wait(DWORD dwMilliseconds)
 	return dwRet;
 }
 
+void CThread::Suspend()
+{
+	if (m_hThread)
+	{
+		::SuspendThread(m_hThread);
+	}
+}
+
+void CThread::Term()
+{
+	if (m_hThread)
+	{
+		::TerminateThread(m_hThread, 0);
+	}
+}
+
 void CThread::Stop()
 {
 	if (m_hThread)

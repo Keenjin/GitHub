@@ -66,6 +66,7 @@ BEGIN_MESSAGE_MAP(CFileRestoreDlg, CDialog)
 	ON_WM_PAINT()
 	ON_WM_QUERYDRAGICON()
 	ON_NOTIFY(TCN_SELCHANGE, IDC_TAB, &CFileRestoreDlg::OnTcnSelchangeTab)
+	ON_WM_CLOSE()
 END_MESSAGE_MAP()
 
 
@@ -105,6 +106,9 @@ BOOL CFileRestoreDlg::OnInitDialog()
 	m_tabMain.InsertItem(TAB_INDEX_ABOUT, _T("关于"));
 
 	m_pageBasic.Create(GetDlgItem(IDC_TAB));
+	m_pageAbout.Create(GetDlgItem(IDC_TAB));
+
+	ShowPage(TAB_INDEX_GENERAL);
 
 	return TRUE;  // return TRUE  unless you set the focus to a control
 }
@@ -164,17 +168,39 @@ void CFileRestoreDlg::OnTcnSelchangeTab(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	// TODO: Add your control notification handler code here
 	ETabIndex eIndex = (ETabIndex)m_tabMain.GetCurSel();
+	*pResult = ShowPage(eIndex);
+}
+
+BOOL CFileRestoreDlg::ShowPage(ETabIndex eIndex)
+{
+	BOOL bRet = TRUE;
+
 	switch (eIndex)
 	{
 	case TAB_INDEX_GENERAL:
-		m_pageBasic.Show(TRUE);
+		bRet &= m_pageBasic.Show(TRUE);
+		bRet &= m_pageAbout.Show(FALSE);
 		break;
 	case TAB_INDEX_ABOUT:
-		m_pageBasic.Show(FALSE);
+		bRet &= m_pageBasic.Show(FALSE);
+		bRet &= m_pageAbout.Show(TRUE);
 		break;
 	default:
 		break;
 	}
 
-	*pResult = 0;
+	return bRet;
+}
+
+void CFileRestoreDlg::OnClose()
+{
+	// TODO:  在此添加消息处理程序代码和/或调用默认值
+	BOOL bCancelClose = FALSE;
+	m_pageBasic.OnWndClose(bCancelClose);
+
+	if (!bCancelClose)
+	{
+		m_pageAbout.EndDialog(0);
+		CDialog::OnClose();
+	}
 }

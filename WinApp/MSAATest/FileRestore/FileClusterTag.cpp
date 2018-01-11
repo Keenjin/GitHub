@@ -380,6 +380,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 					{
 						nCacheSize = ullen > nCacheMaxSize ? nCacheMaxSize : ullen;
 						bfCache = new char[nCacheSize];
+						_auto_free1.Free();
 						_auto_free1.Attach(bfCache);
 						memset(bfCache, 0, nCacheSize);
 					}
@@ -429,7 +430,7 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 					{
 						// 存储到新目录下
 						WCHAR fileName[256] = { 0 };
-						wcscpy(fileName, PathFindFileName(pFilePath));
+						wcscpy_s(fileName, PathFindFileName(pFilePath));
 						wsprintf(fileNewPath, L"%s%s", wsFileNewDir, fileName);
 
 						pFilePath = fileNewPath;
@@ -465,11 +466,16 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 	return S_OK;
 }
 
-HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir)
+HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, IFileClusterCallback* pCallback)
 {
 	HRESULT hr;
 
 	CFileClusterRejust	oCluster(wsDevName, llScanBegin, llScanEnd);
+
+	if (pCallback)
+	{
+		pCallback->OnProgressStart(llScanEnd - llScanBegin);
+	}
 
 	WCHAR wsTmp[100];
 
@@ -529,6 +535,7 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 				{
 					nCacheBuffSize = nBlockSize;
 					bfCache = new char[nCacheBuffSize];
+					_auto_free2.Free();
 					_auto_free2.Attach(bfCache);
 					memset(bfCache, 0, nCacheBuffSize);
 				}
@@ -565,11 +572,21 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 		{
 			ullPos += nCacheBuffSize;
 		}
+
+		if (pCallback)
+		{
+			pCallback->OnProgressIncrement(ullPos - llScanBegin);
+		}
 	}
 
 	oCluster.BuildFiles(wsNewDir);
 	std::list<FILEINFO> listFiles;
 	oCluster.GetFileList(listFiles);
+
+	if (pCallback)
+	{
+		pCallback->OnProgressEnd();
+	}
 
 	if (FAILED(hr))
 		return hr;
@@ -686,6 +703,13 @@ void CFileClusterTag::EnumDiskDevice(std::vector<DISKINFO>& vecDiskDev)
 			std::wcout << PropertyBuffer << std::endl;
 			diskInfo.strFriendName = PropertyBuffer;
 			diskInfo.dwPhysicNum = devNum.DeviceNumber;
+			diskInfo.ullDiskSize = 0;
+			DISK_GEOMETRY dg;
+			if (GetDriveGeometry(diskInfo.dwPhysicNum, dg))
+			{
+				diskInfo.ullDiskSize = dg.Cylinders.QuadPart * (ULONG)dg.TracksPerCylinder *
+					(ULONG)dg.SectorsPerTrack * (ULONG)dg.BytesPerSector;
+			}
 			vecDiskDev.push_back(diskInfo);
 
 			//std::wcout << L"驱动器：PhysicDrive" << devNum.DeviceNumber << std::endl;
@@ -698,4 +722,44 @@ void CFileClusterTag::EnumDiskDevice(std::vector<DISKINFO>& vecDiskDev)
 	{
 		SetupDiDestroyDeviceInfoList(hDevInfo);
 	}
+}
+
+BOOL CFileClusterTag::GetDriveGeometry(int nDriverNum, DISK_GEOMETRY& dg)
+{
+	BOOL bRet = FALSE;
+
+	HANDLE hDevice = NULL;
+	do
+	{
+		CAtlString strDevName;
+		strDevName.Format(L"\\\\.\\PHYSICALDRIVE%d", nDriverNum);
+		hDevice = CreateFile(strDevName, GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE, NULL, OPEN_EXISTING, FILE_FLAG_NO_BUFFERING | FILE_FLAG_RANDOM_ACCESS, NULL);
+		if (!hDevice || hDevice == INVALID_HANDLE_VALUE)
+		{
+			break;
+		}
+
+		DWORD dwReaded = 0;
+		if (!DeviceIoControl(hDevice, 
+			IOCTL_DISK_GET_DRIVE_GEOMETRY, 
+			NULL, 0,              // no input buffer
+			&dg, sizeof(dg),    // output buffer
+			&dwReaded,                // # bytes returned
+			(LPOVERLAPPED)NULL))
+		{
+			DWORD dwErr = GetLastError();
+			break;
+		}
+
+		bRet = TRUE;
+
+	} while (FALSE);
+
+	if (hDevice && hDevice != INVALID_HANDLE_VALUE)
+	{
+		CloseHandle(hDevice);
+		hDevice = NULL;
+	}
+
+	return bRet;
 }
