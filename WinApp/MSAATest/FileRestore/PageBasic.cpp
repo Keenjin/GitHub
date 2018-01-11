@@ -57,7 +57,9 @@ LRESULT CPageBasic::OnUpdate(WPARAM wParam, LPARAM lParam)
 	case UPDATE_MSG_ID_END_THREAD:
 	{
 		// 扫描结束，成功恢复了多少个文件
-		MessageBox(L"扫描结束，成功恢复文件", L"电脑管家", MB_OK | MB_ICONINFORMATION);
+		CAtlString strFinish;
+		strFinish.Format(L"扫描结束，成功恢复%d个文件", lParam);
+		MessageBox(strFinish.GetString(), L"电脑管家", MB_OK | MB_ICONINFORMATION);
 		EnableAllCtrls(TRUE);
 		ShowProgress(FALSE);
 	}
@@ -376,12 +378,12 @@ void CPageBasic::OnBnClickedBtnDiskrestore()
 
 void CPageBasic::EnableAllCtrls(BOOL bEnable)
 {
-	m_btnRestoreFile.EnableWindow(FALSE);
-	m_btnRestoreDisk.EnableWindow(FALSE);
-	m_comboDisk.EnableWindow(FALSE);
-	m_editSavePath.EnableWindow(FALSE);
-	m_btnBrowser.EnableWindow(FALSE);
-	m_btnOpenDir.EnableWindow(FALSE);
+	m_btnRestoreFile.EnableWindow(bEnable);
+	m_btnRestoreDisk.EnableWindow(bEnable);
+	m_comboDisk.EnableWindow(bEnable);
+	m_editSavePath.EnableWindow(bEnable);
+	m_btnBrowser.EnableWindow(bEnable);
+	m_btnOpenDir.EnableWindow(bEnable);
 }
 
 void CPageBasic::ThreadProc()
@@ -426,9 +428,9 @@ LRESULT CPageBasic::OnProgressIncrement(ULONGLONG ullCurrent)
 	return S_OK;
 }
 
-LRESULT CPageBasic::OnProgressEnd()
+LRESULT CPageBasic::OnProgressEnd(DWORD dwSuccCnt)
 {
-	NotifyUpdate(UPDATE_MSG_ID_END_PROGRESS);
+	NotifyUpdate(UPDATE_MSG_ID_END_PROGRESS, dwSuccCnt);
 	return S_OK;
 }
 

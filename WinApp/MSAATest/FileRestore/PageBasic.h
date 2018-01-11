@@ -70,7 +70,7 @@ public:
 
 	virtual LRESULT OnProgressStart(ULONGLONG ullTotal);
 	virtual LRESULT OnProgressIncrement(ULONGLONG ullCurrent);
-	virtual LRESULT OnProgressEnd();
+	virtual LRESULT OnProgressEnd(DWORD dwSuccCnt);
 
 public:
 	CComboBox m_comboDisk;

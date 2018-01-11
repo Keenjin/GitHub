@@ -12,7 +12,7 @@ class IFileClusterCallback
 public:
 	virtual LRESULT OnProgressStart(ULONGLONG ullTotal) = 0;
 	virtual LRESULT OnProgressIncrement(ULONGLONG ullCurrent) = 0;
-	virtual LRESULT OnProgressEnd() = 0;
+	virtual LRESULT OnProgressEnd(DWORD dwSuccCnt) = 0;
 };
 
 

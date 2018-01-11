@@ -585,7 +585,7 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 
 	if (pCallback)
 	{
-		pCallback->OnProgressEnd();
+		pCallback->OnProgressEnd(listFiles.size());
 	}
 
 	if (FAILED(hr))
