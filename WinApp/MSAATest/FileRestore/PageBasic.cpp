@@ -172,6 +172,11 @@ void CPageBasic::ShowDiskSize()
 #define MB_UNIT		1024ull * 1024ull
 #define KB_UNIT		1024ull
 
+	if (m_vecDiskInfo.size() == 0)
+	{
+		return;
+	}
+
 	ULONGLONG ullSize = m_vecDiskInfo[m_comboDisk.GetCurSel()].ullDiskSize;
 	CAtlString strSize;
 	if (ullSize >= GB_UNIT)
@@ -402,8 +407,11 @@ void CPageBasic::ThreadProc()
 	{
 		CFileClusterTag	fileRestore;
 		CAtlString strDevName;
-		strDevName.Format(L"\\\\.\\PHYSICALDRIVE%d", m_vecDiskInfo[m_comboDisk.GetCurSel()].dwPhysicNum);
-		fileRestore.DiskRestore(strDevName, 0, m_vecDiskInfo[m_comboDisk.GetCurSel()].ullDiskSize, strDir, this);
+		if (m_vecDiskInfo.size() > 0)
+		{
+			strDevName.Format(L"\\\\.\\PHYSICALDRIVE%d", m_vecDiskInfo[m_comboDisk.GetCurSel()].dwPhysicNum);
+			fileRestore.DiskRestore(strDevName, 0, m_vecDiskInfo[m_comboDisk.GetCurSel()].ullDiskSize, strDir, this);
+		}
 	}
 
 	InterlockedExchange((volatile long*)&m_bRestoring, FALSE);
