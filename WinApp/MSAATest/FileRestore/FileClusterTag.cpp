@@ -333,14 +333,24 @@ HRESULT CFileClusterTag::AddTag(__in LPCWSTR wsFileNoTag, __in LPCWSTR wsFileTag
 
 HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNewDir/* = NULL*/, __inout LPWSTR wsFileSrc/* = NULL*/, __in DWORD dwBufBytes/* = 0*/, __in BOOL bDelOld/* = TRUE*/)
 {
-	HRESULT hr = E_FAIL;
+	HRESULT hrRet = E_FAIL;
+
+	LOG_PRINT(L"%s Enter.", __FUNCTIONW__);
 
 	do
 	{
+		if (wsFileNewDir && !ATLPath::FileExists(wsFileNewDir))
+		{
+			CreateDirectory(wsFileNewDir, NULL);
+		}
+
 		CAtlFile fSrc;
-		hr = fSrc.Create(wsFileTag, GENERIC_READ, 0, OPEN_EXISTING);
+		HRESULT hr = fSrc.Create(wsFileTag, GENERIC_READ, 0, OPEN_EXISTING);
 		if (FAILED(hr))
+		{
+			LOG_PRINT(L"%s, read(%s) failed. err(%d)", __FUNCTIONW__, wsFileTag, GetLastError());
 			break;
+		}
 
 		ULONGLONG ullen = 0;
 		fSrc.GetSize(ullen);
@@ -413,7 +423,10 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 
 					PSAFEBK_FIRST_BLOCK pInfo = (PSAFEBK_FIRST_BLOCK)pBlock->buff;
 					if (pInfo->filenamelen == 0)
+					{
+						LOG_PRINT(L"%s, filenamelen is 0", __FUNCTIONW__);
 						break;
+					}
 
 					WCHAR* pFilePath = new WCHAR[pInfo->filenamelen / 2 + 1];		CAutoVectorPtr<WCHAR> _auto_free2(pFilePath);
 					memset(pFilePath, 0, pInfo->filenamelen + 2);
@@ -438,7 +451,12 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 
 					hr = fDst.Create(pFilePath, GENERIC_WRITE, 0, CREATE_ALWAYS);
 					if (FAILED(hr))
+					{
+						LOG_PRINT(L"%s, create (%s) failed. err(%d)", __FUNCTIONW__, pFilePath, GetLastError());
 						break;
+					}
+
+					hrRet = S_OK;
 
 					continue;
 				}
@@ -463,10 +481,10 @@ HRESULT CFileClusterTag::RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNe
 
 	} while (FALSE);
 
-	return S_OK;
+	return hrRet;
 }
 
-HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, IFileClusterCallback* pCallback)
+HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, DWORD* pdwSucCnt, IFileClusterCallback* pCallback)
 {
 	HRESULT hr;
 
@@ -585,6 +603,10 @@ HRESULT CFileClusterTag::DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, U
 
 	if (pCallback)
 	{
+		if (pdwSucCnt)
+		{
+			*pdwSucCnt = listFiles.size();
+		}
 		pCallback->OnProgressEnd(listFiles.size());
 	}
 
