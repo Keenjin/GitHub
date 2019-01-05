@@ -142,7 +142,7 @@ public:
 	HRESULT RemoveTag(__in LPCWSTR wsFileTag, __in LPCWSTR wsFileNewDir = NULL, __inout LPWSTR wsFileSrc = NULL, __in DWORD dwBufBytes = 0, __in BOOL bDelOld = TRUE);
 
 	// 暴力搜索
-	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, IFileClusterCallback* pCallback = NULL);
+	HRESULT DiskRestore(LPCWSTR wsDevName, ULONGLONG llScanBegin, ULONGLONG llScanEnd, LPCWSTR wsNewDir, DWORD* pdwSucCnt = NULL, IFileClusterCallback* pCallback = NULL);
 
 	// 磁盘信息获取
 	BOOL GetDeviceNum(const CAtlString& strDevName, STORAGE_DEVICE_NUMBER& devNum);

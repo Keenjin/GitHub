@@ -245,6 +245,11 @@ void CPageBasic::OnBnClickedBtnBrowser()
 
 	if (!strDir.IsEmpty())
 	{
+		if (strDir.Right(1) != L'\\' && strDir.Right(1) != L'/')
+		{
+			strDir += L"\\";
+		}
+
 		m_editSavePath.SetWindowText(strDir);
 	}
 }
@@ -355,7 +360,9 @@ void CPageBasic::OnBnClickedBtnFilerestore()
 	if (fileDlg.DoModal() == IDOK)
 	{
 		EnableAllCtrls(FALSE);
-		m_strFileForRestore = fileDlg.GetFileName();
+		m_strFileForRestore = fileDlg.GetFolderPath();
+		m_strFileForRestore += L"\\";
+		m_strFileForRestore += fileDlg.GetFileName();
 		m_eMethod = RESTORE_METHOD_FILE;
 
 		//ShowProgress(TRUE);
@@ -396,12 +403,19 @@ void CPageBasic::ThreadProc()
 	CString strDir;
 	m_editSavePath.GetWindowText(strDir);
 
+	DWORD dwSucc = 0;
+
 	InterlockedExchange((volatile long*)&m_bRestoring, TRUE);
 
 	if (m_eMethod == RESTORE_METHOD_FILE)
 	{
 		CFileClusterTag	fileRestore;
-		fileRestore.RemoveTag(m_strFileForRestore, strDir);
+		HRESULT hr = fileRestore.RemoveTag(m_strFileForRestore, strDir);
+
+		if (SUCCEEDED(hr))
+		{
+			dwSucc = 1;
+		}
 	}
 	else if (m_eMethod == RESTORE_METHOD_DISK)
 	{
@@ -410,13 +424,13 @@ void CPageBasic::ThreadProc()
 		if (m_vecDiskInfo.size() > 0)
 		{
 			strDevName.Format(L"\\\\.\\PHYSICALDRIVE%d", m_vecDiskInfo[m_comboDisk.GetCurSel()].dwPhysicNum);
-			fileRestore.DiskRestore(strDevName, 0, m_vecDiskInfo[m_comboDisk.GetCurSel()].ullDiskSize, strDir, this);
+			fileRestore.DiskRestore(strDevName, 0, m_vecDiskInfo[m_comboDisk.GetCurSel()].ullDiskSize, strDir, &dwSucc, this);
 		}
 	}
 
 	InterlockedExchange((volatile long*)&m_bRestoring, FALSE);
 
-	NotifyUpdate(UPDATE_MSG_ID_END_THREAD);
+	NotifyUpdate(UPDATE_MSG_ID_END_THREAD, dwSucc);
 }
 
 void CPageBasic::NotifyUpdate(EUpdateMsgID eMsg, LPARAM lParam)

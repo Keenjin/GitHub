@@ -1,0 +1,1 @@
+dism /Remove-Package /Image:"C:\WinPE_amd64\mount" /PackageName:WinPE-Setup-Client-Package~31bf3856ad364e35~amd64~~6.3.9600.16384
